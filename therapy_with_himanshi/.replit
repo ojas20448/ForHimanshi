@@ -1,0 +1,49 @@
+modules = ["nodejs-20", "web", "postgresql-16"]
+run = "npm run dev"
+hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
+
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+deploymentTarget = "autoscale"
+build = ["npm", "run", "build"]
+run = ["npm", "run", "start"]
+
+[[ports]]
+localPort = 5001
+externalPort = 80
+
+[env]
+PORT = "5001"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5001
+
+[agent]
+mockupState = "FULLSTACK"
+expertMode = true
+
+[userenv]
+
+[userenv.shared]
+VITE_RAZORPAY_KEY_ID = "rzp_test_1DP5mmOlF5G0M3"
+VITE_CALCOM_BOOKING_LINK = "https://cal.com/himanshi"
