@@ -1,2 +1,8 @@
 # Local Netlify folder
 .netlify
+
+# Large files
+3-min-Guide.mov
+therapy_with_himanshi.zip
+*.mov
+*.zip
