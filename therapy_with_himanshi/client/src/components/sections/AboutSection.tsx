@@ -40,9 +40,16 @@ export function AboutSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-4xl mx-auto text-center mb-24"
+          className="max-w-4xl mx-auto text-center mb-24 relative"
         >
-          <span className="text-primary font-medium tracking-wide uppercase text-sm mb-4 block">Our Philosophy</span>
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.2 }}
+            className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-primary/5 rounded-full blur-2xl -z-10"
+          />
+          <span className="text-primary font-medium tracking-wide uppercase text-sm mb-4 block">My Philosophy</span>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-8 leading-tight">
             Understanding the inner <span className="text-balance italic text-primary/80">landscape</span> you carry.
           </h2>
@@ -69,7 +76,11 @@ export function AboutSection() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>
             {/* Floating decorative element */}
-            <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-secondary/80 backdrop-blur-md rounded-full z-10 hidden md:block animate-pulse-slow" />
+            <motion.div
+              animate={{ y: [0, -15, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-8 -right-8 w-32 h-32 bg-secondary/80 backdrop-blur-md rounded-full z-10 hidden md:block"
+            />
           </motion.div>
 
           <motion.div

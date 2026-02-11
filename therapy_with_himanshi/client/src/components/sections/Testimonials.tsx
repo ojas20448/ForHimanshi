@@ -67,7 +67,7 @@ export function Testimonials() {
                         <div className="flex -ml-4 md:-ml-8">
                             {testimonials.map((item, index) => (
                                 <div className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_40%] pl-4 md:pl-8 min-w-0" key={item.id}>
-                                    <div className={`h-full p-8 rounded-3xl transition-all duration-300 border border-border/50 relative group ${index === selectedIndex ? "bg-white shadow-xl scale-100 opacity-100" : "bg-white/60 shadow-none scale-95 opacity-70 blur-[1px]"
+                                    <div className={`h-full p-8 rounded-3xl transition-all duration-300 border border-border/50 relative group ${index === selectedIndex ? "bg-white shadow-premium scale-100 opacity-100" : "bg-white/40 shadow-none scale-[0.98] opacity-60 blur-[0.5px]"
                                         }`}>
                                         <Quote className="text-primary/20 absolute top-6 left-6 w-12 h-12" />
 

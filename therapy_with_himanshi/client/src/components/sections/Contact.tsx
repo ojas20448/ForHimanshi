@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Mail, Instagram, MapPin } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -129,6 +130,18 @@ export function Contact() {
                   <p className="text-lg font-medium text-foreground">
                     Online & In-person (Delhi/Noida)
                   </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/60 hover:bg-white transition-colors duration-300 shadow-sm border border-transparent hover:border-border/50">
+                <div className="w-12 h-12 rounded-full bg-secondary text-primary flex items-center justify-center shrink-0">
+                  <WhatsAppIcon size={20} />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">WhatsApp</p>
+                  <a href="https://wa.me/919599529780" target="_blank" rel="noreferrer" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
+                    +91 95995 29780
+                  </a>
                 </div>
               </div>
             </div>

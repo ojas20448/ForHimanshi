@@ -37,14 +37,38 @@ export function Hero() {
             className="flex flex-col items-center md:items-start text-center md:text-left space-y-8 z-10"
           >
             <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] text-foreground">
-              <span className="text-primary block mb-2">Manzar</span> Therapy
+              <motion.span
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-primary block mb-2"
+              >
+                Manzar
+              </motion.span>
+              <motion.span
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                Therapy
+              </motion.span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed font-light">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              className="text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed font-light"
+            >
               A space that centres your lived experience and honours the complexity of your inner landscape.
-            </p>
+            </motion.p>
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full md:w-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.7 }}
+              className="flex flex-col sm:flex-row gap-4 pt-4 w-full md:w-auto"
+            >
               <Link href="/payment">
                 <Button size="lg" className="rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all w-full sm:w-auto" data-testid="button-book-session">
                   Book a Session
@@ -55,7 +79,7 @@ export function Hero() {
                   Contact Me
                 </Button>
               </a>
-            </div>
+            </motion.div>
 
             <div className="flex gap-8 pt-4 text-sm text-muted-foreground font-medium">
               <div className="flex items-center gap-2">
@@ -99,8 +123,8 @@ export function Hero() {
                   key={index}
                   onClick={() => setCurrentIndex(index)}
                   className={`h-1.5 rounded-full transition-all duration-300 backdrop-blur-sm ${index === currentIndex
-                      ? "bg-white w-8"
-                      : "bg-white/40 w-2 hover:bg-white/60"
+                    ? "bg-white w-8"
+                    : "bg-white/40 w-2 hover:bg-white/60"
                     }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />

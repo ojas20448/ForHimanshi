@@ -3,8 +3,7 @@ import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import logo from "@assets/Manzar.svg";
-const NEW_LOGO = "/favicon.png";
+import logo from "@assets/logo.png";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +19,7 @@ export function Navbar() {
     setIsOpen(false);
     const element = document.querySelector(href);
     if (element) {
-      const offset = 80; // height of fixed navbar (h-20)
+      const offset = 64; // Approx height of navbar
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -39,9 +38,9 @@ export function Navbar() {
 
   return (
     <nav className="fixed top-0 z-50 w-full border-b bg-white">
-      <div className="container mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
+      <div className="container mx-auto px-4 md:px-6 py-2 flex items-center justify-between">
         <div onClick={scrollToTop} className="cursor-pointer flex items-center gap-3">
-          <img src={NEW_LOGO} alt="Manzar Therapy" className="h-[6.75rem] w-auto md:h-36 transition-transform hover:scale-110 object-contain" />
+          <img src={logo} alt="Manzar Therapy" className="h-12 md:h-16 w-auto transition-transform hover:scale-105 object-contain mix-blend-multiply" />
         </div>
 
         <div className="hidden md:flex items-center gap-8">

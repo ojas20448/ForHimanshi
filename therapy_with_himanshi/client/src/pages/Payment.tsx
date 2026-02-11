@@ -74,7 +74,7 @@ export default function Payment() {
 
     // Initialize Cal.com embed
     (async function () {
-      const cal = await import("@calcom/embed-react");
+      const cal = await import("@calcom/embed-react") as any;
       cal.default("init", { debug: false });
     })();
   }, []);
@@ -303,7 +303,7 @@ export default function Payment() {
                     ) : (
                       <div className="w-full h-full min-h-[600px]">
                         <iframe
-                          src="https://cal.com/himanshi-sahni/therapy-session"
+                          src="https://cal.com/himanshi-sahni"
                           width="100%"
                           height="100%"
                           frameBorder="0"
