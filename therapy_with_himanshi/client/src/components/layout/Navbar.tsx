@@ -17,6 +17,13 @@ export function Navbar() {
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setIsOpen(false);
+
+    // If not on homepage, navigate to homepage first
+    if (location !== "/") {
+      window.location.href = "/" + href;
+      return;
+    }
+
     const element = document.querySelector(href);
     if (element) {
       const offset = 64; // Approx height of navbar
@@ -55,7 +62,7 @@ export function Navbar() {
               {link.name}
             </a>
           ))}
-          <Link href="/payment">
+          <Link href="/book">
             <Button className="rounded-full px-6 shadow-md hover:shadow-lg transition-all" data-testid="nav-book-session">Book a Session</Button>
           </Link>
         </div>

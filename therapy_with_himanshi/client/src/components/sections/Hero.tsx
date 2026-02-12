@@ -69,7 +69,7 @@ export function Hero() {
               transition={{ duration: 0.6, delay: 0.7 }}
               className="flex flex-col sm:flex-row gap-4 pt-4 w-full md:w-auto"
             >
-              <Link href="/payment">
+              <Link href="/book">
                 <Button size="lg" className="rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all w-full sm:w-auto" data-testid="button-book-session">
                   Book a Session
                 </Button>

@@ -108,7 +108,7 @@ export function Services() {
                     </div>
                   </CardContent>
                   <CardFooter className="pt-4">
-                    <Link href={`/payment?service=${service.id}`} className="w-full">
+                    <Link href={`/book?service=${service.id}`} className="w-full">
                       <Button className="w-full rounded-xl h-12 text-base shadow-none hover:shadow-lg transition-all group-hover:bg-primary group-hover:text-white" variant="secondary" data-testid={`button-book-${service.id}`}>
                         Book Session <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
                       </Button>
