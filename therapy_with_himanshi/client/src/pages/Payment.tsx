@@ -64,20 +64,62 @@ export default function Payment() {
     // Scroll to top on mount
     window.scrollTo(0, 0);
 
-    // Parse query params to select service
+    // Parse query params
     const searchParams = new URLSearchParams(window.location.search);
     const serviceId = searchParams.get("service");
+    const orderId = searchParams.get("order_id");
+
+    // Select service if provided
     const foundService = services.find((s) => s.id === serviceId);
     if (foundService) {
       setSelectedService(foundService);
     }
 
-    // Initialize Cal.com embed
-    (async function () {
-      const cal = await import("@calcom/embed-react") as any;
-      cal.default("init", { debug: false });
-    })();
+    // Handle Redirect from Payment Gateway
+    if (orderId) {
+      verifyPayment(orderId);
+    }
+
   }, []);
+
+  const verifyPayment = async (orderId: string) => {
+    setLoading(true);
+    setOrderStatus("processing");
+    try {
+      const response = await fetch("/api/payments/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setOrderStatus("success");
+        toast({
+          title: "Payment Successful! 🎉",
+          description: "Your session is confirmed. Please check your email.",
+        });
+
+        // Redirect to home after 2 seconds
+        setTimeout(() => {
+          setLocation("/");
+        }, 2000);
+      } else {
+        throw new Error(data.error || "Payment verification failed");
+      }
+    } catch (error: any) {
+      console.error("Verification Error:", error);
+      setOrderStatus("failure");
+      toast({
+        title: "Verification Failed",
+        description: error.message || "Could not verify payment status.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePayment = async () => {
     setLoading(true);
@@ -105,7 +147,7 @@ export default function Payment() {
       // Initialize payment
       const checkoutOptions = {
         paymentSessionId: data.payment_session_id,
-        redirectTarget: "_modal",
+        redirectTarget: "_self", // Redirect to self to handle mobile/popup blocks better
       };
 
       const cf = await initializeCashfree();
@@ -121,15 +163,6 @@ export default function Payment() {
         }
         if (result.redirect) {
           console.log("Payment Redirect");
-        }
-        if (result.paymentDetails) {
-          console.log("Payment Success:", result.paymentDetails);
-          setOrderStatus("success");
-          setBookingStep("scheduling");
-          toast({
-            title: "Payment Successful",
-            description: "Please proceed to schedule your session.",
-          });
         }
       });
     } catch (error: any) {
@@ -301,15 +334,43 @@ export default function Payment() {
                         </div>
                       </Tabs>
                     ) : (
-                      <div className="w-full h-full min-h-[600px]">
-                        <iframe
-                          src="https://cal.com/himanshi-sahni"
-                          width="100%"
-                          height="100%"
-                          frameBorder="0"
-                          title="Schedule Session"
-                          className="w-full h-full rounded-b-xl"
-                        />
+                      <div className="w-full h-full min-h-[400px] flex flex-col items-center justify-center p-8 text-center space-y-6">
+                        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-2">
+                          <Check className="w-10 h-10 text-green-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-2xl font-bold text-foreground">Payment Successful!</h3>
+                          <p className="text-muted-foreground mt-2 max-w-md mx-auto">
+                            Your payment has been verified. You can now proceed to schedule your session on Cal.com.
+                          </p>
+                        </div>
+                        <Button
+                          size="lg"
+                          className="w-full max-w-sm text-lg h-14 shadow-lg shadow-green-200"
+                          onClick={() => {
+                            // Fetch the secure link or use the public one if acceptable
+                            fetch("/api/book/access")
+                              .then(res => res.json())
+                              .then(data => {
+                                if (data.calLink) {
+                                  window.location.href = data.calLink;
+                                } else {
+                                  toast({
+                                    title: "Error",
+                                    description: "Could not retrieve booking link.",
+                                    variant: "destructive"
+                                  });
+                                }
+                              })
+                              .catch(err => {
+                                console.error(err);
+                                // Fallback if API fails
+                                window.location.href = "https://cal.com/himanshi-sahni/therapy-sessions";
+                              });
+                          }}
+                        >
+                          Schedule Session <ExternalLink className="ml-2 w-5 h-5" />
+                        </Button>
                       </div>
                     )}
                   </CardContent>

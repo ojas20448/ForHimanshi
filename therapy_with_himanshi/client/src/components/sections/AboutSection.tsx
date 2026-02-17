@@ -7,7 +7,7 @@ import image2 from "@assets/WhatsApp_Image_2025-12-11_at_00.59.14_1765616014879.
 import image3 from "@assets/WhatsApp_Image_2025-12-11_at_00.59.59_1765616014879.jpeg";
 import image4 from "@assets/himanshi_2.jpeg";
 
-const images = [image1, image2, image3, image4];
+const images = [image4, image1, image2, image3];
 
 export function AboutSection() {
   const [currentIndex, setCurrentIndex] = useState(0);

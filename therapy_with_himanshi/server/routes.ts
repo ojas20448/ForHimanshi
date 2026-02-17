@@ -26,7 +26,7 @@ function generateBookingToken(): string {
 function resolveHttpsBaseUrl(req: Request): string | null {
   const rawBase =
     process.env.BASE_URL?.trim() ||
-    (typeof req.headers.origin === "string" ? req.headers.origin.trim() : "");
+    (typeof req.headers.origin === "string" ? req.headers.origin.trim() : "https://manzartherapy.com");
 
   if (!rawBase) {
     return null;
@@ -228,41 +228,13 @@ export async function registerRoutes(
       const bookingToken = await storage.getBookingToken(token);
 
       if (!bookingToken) {
-        return res.status(401).json({
-          authorized: false,
-          error: "Invalid or expired booking token. Please complete payment first."
-        });
+        return res.status(401).json({ authorized: false });
       }
 
-      res.json({
-        authorized: true,
-        calLink: "https://cal.com/himanshi-sahni/therapy-sessions?embed=true&theme=light",
-      });
+      res.json({ authorized: true });
     } catch (error: any) {
-      console.error("Error checking booking access:", error);
-      res.status(500).json({ error: "Failed to check booking access" });
-    }
-  });
-
-  app.post("/api/book/consume", async (req: Request, res: Response) => {
-    try {
-      const token = req.cookies?.booking_token || req.body.token;
-
-      if (!token) {
-        return res.status(401).json({ error: "No booking token provided" });
-      }
-
-      const consumedToken = await storage.consumeBookingToken(token);
-
-      if (!consumedToken) {
-        return res.status(400).json({ error: "Token already used or expired" });
-      }
-
-      res.clearCookie("booking_token");
-      res.json({ success: true, message: "Booking token consumed" });
-    } catch (error: any) {
-      console.error("Error consuming token:", error);
-      res.status(500).json({ error: "Failed to consume token" });
+      console.error("Error with booking token:", error);
+      res.status(500).json({ error: "Booking token error" });
     }
   });
 
