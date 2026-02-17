@@ -9,6 +9,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { initializeCashfree } from "./Payment";
+// Cal.com will be initialized via script injection
 
 const services = [
   {
@@ -58,35 +59,84 @@ export default function Book() {
       setSelectedService(foundService);
     }
 
-    // Initialize Cal.com embed
-    (async function () {
-      try {
-        const cal = await import("@calcom/embed-react") as any;
-        cal.default("init", { debug: false });
+    // Cal.com snippet injection (Vanilla JS approach for maximum reliability)
+    (function (C: any, A: string, L: string) {
+      let p = function (a: any, ar: any) { a.q.push(ar); };
+      let d = C.document;
+      C.Cal = C.Cal || function () {
+        let cal = C.Cal;
+        let ar = arguments;
+        if (!cal.loaded) {
+          cal.ns = {};
+          cal.q = cal.q || [];
+          d.head.appendChild(d.createElement("script")).src = A;
+          cal.loaded = true;
+        }
+        if (ar[0] === L) {
+          const api: any = function () { p(api, arguments); };
+          const namespace = ar[1];
+          api.q = api.q || [];
+          if (typeof namespace === "string") {
+            cal.ns[namespace] = cal.ns[namespace] || api;
+            p(cal.ns[namespace], ar);
+            p(cal, ["initNamespace", namespace]);
+          } else p(cal, ar);
+          return;
+        }
+        p(cal, ar);
+      };
+    })(window, "https://app.cal.com/embed/embed.js", "init");
 
-        // Listen for booking submission
-        cal.default("on", {
-          action: "bookingSuccessful",
-          callback: (e: any) => {
-            console.log("Booking submitted:", e.detail);
-            setBookingSubmitted(true);
-            setTimeout(() => {
-              const paymentSection = document.getElementById("payment-section");
-              if (paymentSection) {
-                paymentSection.scrollIntoView({ behavior: "smooth", block: "start" });
-              }
-            }, 300);
-            toast({
-              title: "Time Slot Reserved! ✅",
-              description: "Please complete payment below to confirm your booking.",
-            });
-          },
-        });
-      } catch (error) {
-        console.error("Cal.com initialization error:", error);
+    // @ts-ignore
+    window.Cal("init", "therapy-sessions", { origin: "https://app.cal.com" });
+    // @ts-ignore
+    window.Cal.ns["therapy-sessions"]("inline", {
+      elementOrSelector: "#cal-inline",
+      calLink: "himanshi-sahni/therapy-sessions",
+      config: { "theme": "light", "layout": "month_view" }
+    });
+    // @ts-ignore
+    window.Cal.ns["therapy-sessions"]("ui", { "hideEventTypeDetails": false, "layout": "month_view" });
+
+    // Global message listener for Cal.com events (most reliable method)
+    const handleMessage = (e: MessageEvent) => {
+      // Cal.com sends messages with specific data structures
+      const data = e.data;
+      const isCalEvent = data?.source === "cal-embed" || data?.origin === "Cal" || (typeof data === 'string' && data.includes('pro.cal.com'));
+
+      if (isCalEvent) {
+        // Look for bookingSuccessful in the type or action field
+        if (data?.type === "bookingSuccessful" || data?.action === "bookingSuccessful") {
+          onBookingSuccessful(data);
+        }
       }
-    })();
+    };
+
+    window.addEventListener("message", handleMessage);
+
+
+
+    return () => window.removeEventListener("message", handleMessage);
   }, [toast]);
+
+  const onBookingSuccessful = (data: any) => {
+    console.log("Booking successfully detected:", data);
+    if (bookingSubmitted) return; // Prevent double trigger
+
+    setBookingSubmitted(true);
+    toast({
+      title: "Time Slot Reserved! ✅",
+      description: "Please complete payment below to confirm your booking.",
+    });
+
+    // Scroll to payment section
+    setTimeout(() => {
+      const paymentSection = document.getElementById("payment-section");
+      if (paymentSection) {
+        paymentSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 500);
+  };
 
   const handleCashfreePayment = async () => {
     setPaymentProcessing(true);
@@ -268,17 +318,20 @@ export default function Book() {
                       <CardDescription>Choose a convenient time for your therapy session</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
-                      <div className="w-full min-h-[650px] bg-white/20">
-                        <iframe
-                          src="https://cal.com/himanshi-sahni/therapy-sessions?embed=true&theme=light"
-                          width="100%"
-                          height="650"
-                          frameBorder="0"
-                          title="Book Session"
-                          className="w-full"
-                        />
+                      <div className="w-full min-h-[650px] bg-white/20 relative">
+                        <div id="cal-inline" style={{ width: "100%", height: "650px", overflow: "scroll" }}></div>
                       </div>
                     </CardContent>
+                    {!bookingSubmitted && (
+                      <div className="p-4 bg-secondary/10 border-t border-white/20 text-center">
+                        <button
+                          onClick={() => setBookingSubmitted(true)}
+                          className="text-xs text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
+                        >
+                          Already booked a slot? Click here to reveal payment options.
+                        </button>
+                      </div>
+                    )}
                   </Card>
                 </motion.div>
 
@@ -289,7 +342,7 @@ export default function Book() {
                   animate={{ opacity: bookingSubmitted ? 1 : 0.5, y: 0 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <Card className={`glass-panel border-white/60 shadow-xl ${!bookingSubmitted && 'pointer-events-none'}`}>
+                  <Card className="glass-panel border-white/60 shadow-xl">
                     <CardHeader className="bg-white/40 border-b border-white/20">
                       <CardTitle className="font-heading text-2xl">
                         {bookingSubmitted ? "Complete Payment" : "Payment Options"}
@@ -297,7 +350,7 @@ export default function Book() {
                       <CardDescription>
                         {bookingSubmitted
                           ? "Choose your preferred payment method to confirm your booking"
-                          : "Available after you select a time slot above"}
+                          : "Please select a time slot above to unlock payment"}
                       </CardDescription>
                     </CardHeader>
 
@@ -329,6 +382,8 @@ export default function Book() {
                                 <div className="animate-spin mr-2 h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
                                 Processing...
                               </>
+                            ) : !bookingSubmitted ? (
+                              "Complete Booking Above First"
                             ) : (
                               `Pay ₹${selectedService.price} Securely`
                             )}

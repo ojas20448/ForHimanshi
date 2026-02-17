@@ -50,7 +50,7 @@ export function Testimonials() {
     }, [emblaApi, onSelect]);
 
     return (
-        <section className="py-24 bg-gradient-to-b from-white to-secondary/20">
+        <section className="py-24 bg-background relative">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <span className="text-primary font-medium tracking-wide uppercase text-sm mb-4 block">Kind Words</span>

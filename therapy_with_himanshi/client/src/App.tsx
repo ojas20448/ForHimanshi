@@ -8,6 +8,9 @@ import Home from "@/pages/Home";
 import Book from "@/pages/Book";
 import Payment from "@/pages/Payment";
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
+import { Preloader } from "@/components/ui/Preloader";
+import { useState, useEffect } from "react";
+import { AnimatePresence } from "framer-motion";
 
 function Router() {
   return (
@@ -25,10 +28,30 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <AppContent />
         <WhatsAppButton />
       </TooltipProvider>
     </QueryClientProvider>
+  );
+}
+
+function AppContent() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <>
+      <AnimatePresence mode="wait">
+        {loading && <Preloader />}
+      </AnimatePresence>
+      <Router />
+    </>
   );
 }
 

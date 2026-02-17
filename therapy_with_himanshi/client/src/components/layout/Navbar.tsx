@@ -56,10 +56,11 @@ export function Navbar() {
               key={link.name}
               href={link.href}
               onClick={(e) => handleScroll(e, link.href)}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary relative group"
               data-testid={`nav-${link.name.toLowerCase()}`}
             >
               {link.name}
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[hsl(var(--accent-pink))] transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
           <Link href="/book">

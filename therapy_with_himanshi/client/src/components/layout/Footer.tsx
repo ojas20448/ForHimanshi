@@ -9,6 +9,7 @@ export function Footer() {
     <footer className="bg-foreground text-white py-16 mt-auto relative overflow-hidden">
       {/* Decorative gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-[hsl(var(--accent-pink))]/20 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         <div className="grid md:grid-cols-4 gap-12 mb-16">
@@ -105,7 +106,7 @@ export function Footer() {
           <p>© {currentYear} Manzar Therapy. All rights reserved.</p>
           <div className="flex items-center gap-2">
             <span>Designed with</span>
-            <Heart size={14} className="text-primary-foreground fill-primary-foreground" />
+            <Heart size={14} className="text-[hsl(var(--accent-pink))] fill-[hsl(var(--accent-pink))]" />
             <span>for Healing</span>
           </div>
         </div>

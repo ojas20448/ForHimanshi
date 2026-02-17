@@ -85,11 +85,11 @@ export default function Payment() {
 
     try {
       // Create order
-      const response = await fetch("/api/create-order", {
+      const response = await fetch("/api/payments/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          orderAmount: selectedService.price,
+          serviceId: selectedService.id,
           customerName: "Client", // In a real app, collect this from a form
           customerPhone: "9999999999", // In a real app, collect this
           customerEmail: "client@example.com", // In a real app, collect this

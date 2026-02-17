@@ -39,53 +39,61 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
-  --font-sans: 'Manrope', sans-serif;
+  --font-sans: 'Lato', sans-serif;
   /* Cleaner, modern body font */
-  --font-heading: 'Cormorant Garamond', serif;
+  --font-heading: 'Poppins', sans-serif;
 
   --radius: 1rem;
 }
 
 /* LIGHT MODE */
 :root {
-  /* Warm, organic off-white background */
-  --background: 20 14% 98%;
-  /* Deep, warm charcoal for text - easier on eyes than black */
-  --foreground: 20 7% 20%;
+  /* Full Pink Background as requested - #E0C7CD */
+  --background: 346 29% 83%;
+  /* True Black/Neutral Dark for text - Removes brown tint */
+  --foreground: 0 0% 10%;
 
   /* Cards - Pure white with warmth */
   --card: 0 0% 100%;
-  --card-foreground: 20 7% 20%;
+  --card-foreground: 0 0% 10%;
+
+  /* Accents */
+  --accent-pink: 346 29% 83%;
+  /* #E0C7CD */
+  /* Soft Blush for subtle warmth */
 
   --popover: 0 0% 100%;
   --popover-foreground: 20 7% 20%;
 
-  /* Primary: Muted Rose/Terracotta - Sophisticated & Grounded */
-  --primary: 346 41% 56%;
-  --primary-foreground: 355 100% 97%;
+  /* Primary: User Specified Green #234023 */
+  --primary: 120 29% 19%;
+  --primary-foreground: 0 0% 98%;
 
-  /* Secondary: Soft Sage/Clay - Calming neutral */
-  --secondary: 24 20% 92%;
-  --secondary-foreground: 24 10% 30%;
+  /* Secondary: Soft Earth/Beige - Natural warmth */
+  --secondary: 40 20% 94%;
+  --secondary-foreground: 120 29% 15%;
 
-  /* Muted: Warm Gray */
-  --muted: 24 10% 94%;
-  --muted-foreground: 20 5% 45%;
+  /* Muted: Cool Gray/Green tint */
+  --muted: 153 10% 94%;
+  --muted-foreground: 153 10% 40%;
 
-  /* Accent: Soft Blush for hovers */
-  --accent: 346 41% 94%;
-  --accent-foreground: 346 41% 40%;
+  /* Accent: Pale Sage for hovers/backgrounds */
+  --accent: 153 20% 94%;
+  --accent-foreground: 153 25% 35%;
 
   /* Destructive */
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 0 0% 98%;
 
   /* Borders */
-  --border: 24 10% 88%;
-  --input: 24 10% 88%;
-  --ring: 346 41% 56%;
+  --border: 153 10% 85%;
+  --input: 153 10% 85%;
+  --ring: 153 25% 35%;
 
   --radius: 1rem;
+
+  --font-sans: 'Lato', sans-serif;
+  --font-heading: 'Poppins', sans-serif;
 }
 
 @layer base {
@@ -94,7 +102,7 @@
   }
 
   ::selection {
-    background-color: hsl(var(--primary) / 0.2);
+    background-color: hsl(var(--accent-pink));
     color: hsl(var(--primary));
   }
 
@@ -119,7 +127,7 @@
 /* Utility classes */
 @layer utilities {
   .bg-gradient-soft {
-    background: linear-gradient(180deg, hsl(20, 20%, 99%) 0%, hsl(24, 20%, 95%) 100%);
+    background: linear-gradient(180deg, hsl(340, 85%, 95%) 0%, hsl(var(--background)) 100%);
   }
 
   .glass-panel {
@@ -131,11 +139,7 @@
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    transition: all 0.3s ease;
+    @apply bg-white/80 backdrop-blur-md border border-primary/10 shadow-sm transition-all duration-300;
   }
 
   .glass-card:hover {

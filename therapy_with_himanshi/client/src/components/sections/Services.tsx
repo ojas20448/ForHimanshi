@@ -55,10 +55,11 @@ import { UserCheck, CloudRain, Shield } from "lucide-react";
 
 export function Services() {
   return (
-    <section id="services" className="py-24 md:py-32 bg-muted/30 relative">
+    <section id="services" className="py-24 md:py-32 bg-white relative">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-white/40 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-[700px] h-[700px] bg-[hsl(var(--accent-pink))]/50 rounded-full blur-[120px]" />
       </div>
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
@@ -84,24 +85,24 @@ export function Services() {
                 transition={{ duration: 0.7, delay: index * 0.15, ease: "easeOut" }}
                 className="h-full"
               >
-                <Card className="glass-card h-full flex flex-col border-white/50 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all duration-300 group" data-testid={`card-service-${service.id}`}>
+                <Card className="h-full bg-white/80 backdrop-blur-sm border-primary/20 shadow-sm hover:shadow-lg hover:border-[hsl(var(--accent-pink))] transition-all duration-300 group flex flex-col" data-testid={`card-service-${service.id}`}>
                   <CardHeader className="pb-2">
-                    <div className="w-14 h-14 rounded-2xl bg-secondary/30 flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 text-primary group-hover:scale-110 group-hover:bg-[hsl(var(--accent-pink))] transition-all duration-300">
                       <IconComponent size={28} />
                     </div>
-                    <CardTitle className="font-heading text-2xl leading-tight">{service.title}</CardTitle>
+                    <CardTitle className="font-heading text-2xl leading-tight text-foreground/90">{service.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6 flex-grow">
-                    <CardDescription className="text-base text-muted-foreground leading-relaxed">
+                    <CardDescription className="text-base text-muted-foreground leading-relaxed font-light">
                       {service.description}
                     </CardDescription>
 
                     <div className="space-y-3 pt-2">
-                      <div className="flex items-center gap-3 text-sm text-foreground/80 bg-white/50 p-2 rounded-lg w-fit">
-                        <Clock size={16} className="text-primary/70" />
+                      <div className="flex items-center gap-3 text-sm text-foreground/70">
+                        <Clock size={16} className="text-primary/60" />
                         <span>{service.duration} minutes</span>
                       </div>
-                      <div className="flex items-center gap-3 text-sm font-semibold text-primary bg-primary/5 p-2 rounded-lg w-fit">
+                      <div className="flex items-center gap-3 text-sm font-medium text-primary">
                         <IndianRupee size={16} />
                         <span>{service.price.toLocaleString()}</span>
                       </div>
@@ -109,7 +110,7 @@ export function Services() {
                   </CardContent>
                   <CardFooter className="pt-4">
                     <Link href={`/book?service=${service.id}`} className="w-full">
-                      <Button className="w-full rounded-xl h-12 text-base shadow-none hover:shadow-lg transition-all group-hover:bg-primary group-hover:text-white" variant="secondary" data-testid={`button-book-${service.id}`}>
+                      <Button className="w-full rounded-xl h-12 text-base font-medium border-primary/30 text-primary hover:bg-primary hover:text-white transition-all duration-300" variant="outline" data-testid={`button-book-${service.id}`}>
                         Book Session <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
                       </Button>
                     </Link>
@@ -146,7 +147,7 @@ export function Services() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: index * 0.05 }}
                   whileHover={{ scale: 1.05, rotate: [-1, 1, 0] }}
-                  className="px-6 py-4 bg-white rounded-full shadow-sm border border-border/50 flex items-center gap-3 hover:border-primary/30 hover:shadow-md transition-all cursor-default"
+                  className="px-6 py-4 bg-white/50 backdrop-blur-sm rounded-full shadow-sm border border-primary/10 flex items-center gap-3 hover:border-primary/40 hover:bg-white/80 hover:shadow-md transition-all cursor-default"
                 >
                   <IconComponent size={18} className="text-primary/70" />
                   <span className="text-base font-medium text-foreground/80">{concern.label}</span>

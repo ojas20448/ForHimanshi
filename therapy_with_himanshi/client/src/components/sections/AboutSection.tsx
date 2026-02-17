@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import image1 from "@assets/WhatsApp_Image_2025-12-11_at_00.59.14_(1)_1765616014879.jpeg";
 import image2 from "@assets/WhatsApp_Image_2025-12-11_at_00.59.14_1765616014879.jpeg";
 import image3 from "@assets/WhatsApp_Image_2025-12-11_at_00.59.59_1765616014879.jpeg";
-import image4 from "@assets/WhatsApp_Image_2025-12-11_at_01.01.21_1765616014879.jpeg";
+import image4 from "@assets/himanshi_2.jpeg";
 
 const images = [image1, image2, image3, image4];
 
@@ -29,9 +29,7 @@ export function AboutSection() {
 
   return (
     <section id="about" className="py-24 md:py-32 bg-background relative overflow-hidden">
-      {/* Decorative background blur */}
-      <div className="absolute top-1/4 -right-64 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 -left-64 w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[120px] pointer-events-none" />
+      {/* Decorative background blur removed as per request */}
 
       <div className="container mx-auto px-4 md:px-6">
         {/* Intro Text */}
@@ -67,7 +65,7 @@ export function AboutSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 ease-out">
+            <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden rotate-2 hover:rotate-0 transition-transform duration-500 ease-out">
               <img
                 src={image4}
                 alt="Abstract inner landscape"
@@ -134,7 +132,7 @@ export function AboutSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl -rotate-2 hover:rotate-0 transition-transform duration-500 ease-out border-4 border-white"
+              className="relative aspect-[4/5] rounded-[2rem] overflow-hidden -rotate-2 hover:rotate-0 transition-transform duration-500 ease-out border-4 border-white"
             >
               {images.map((img, index) => (
                 <img

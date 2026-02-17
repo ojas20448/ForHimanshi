@@ -6,16 +6,17 @@ import { Cashfree, CFEnvironment } from "cashfree-pg";
 import crypto from "crypto";
 import { URL } from "url";
 
-function getCashfreeClient(): Cashfree | null {
+// Initialize Cashfree client helper
+function getCashfreeClient(): any {
   const clientId = process.env.CASHFREE_CLIENT_ID?.trim();
   const clientSecret = process.env.CASHFREE_CLIENT_SECRET?.trim();
-  
+  const environment = process.env.CASHFREE_ENV === "SANDBOX" ? CFEnvironment.SANDBOX : CFEnvironment.PRODUCTION;
+
   if (!clientId || !clientSecret) {
-    console.error("Cashfree credentials missing");
     return null;
   }
-  
-  return new Cashfree(CFEnvironment.PRODUCTION, clientId, clientSecret);
+
+  return new Cashfree(environment, clientId, clientSecret);
 }
 
 function generateBookingToken(): string {
@@ -33,7 +34,8 @@ function resolveHttpsBaseUrl(req: Request): string | null {
 
   try {
     const url = new URL(rawBase);
-    if (url.protocol !== "https:") {
+    // Only force HTTPS if not on localhost and not explicitly requested sandbox
+    if (url.hostname !== "localhost" && url.hostname !== "127.0.0.1" && url.protocol !== "https:") {
       url.protocol = "https:";
     }
     url.pathname = "";
@@ -87,10 +89,7 @@ export async function registerRoutes(
     try {
       const { serviceId, customerName, customerEmail, customerPhone } = req.body;
 
-      const cashfree = getCashfreeClient();
-      if (!cashfree) {
-        return res.status(500).json({ error: "Payment gateway not configured" });
-      }
+
 
       const service = services.find((s) => s.id === serviceId);
       if (!service) {
@@ -99,11 +98,16 @@ export async function registerRoutes(
 
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+      const cashfree = getCashfreeClient();
+      if (!cashfree) {
+        return res.status(500).json({ error: "Payment gateway not configured" });
+      }
+
       const baseUrl = resolveHttpsBaseUrl(req);
       if (!baseUrl) {
         return res.status(400).json({ error: "Missing BASE_URL or Origin to build return URL" });
       }
-      
+
       const orderRequest = {
         order_amount: service.price,
         order_currency: "INR",
@@ -120,8 +124,11 @@ export async function registerRoutes(
         order_note: service.title
       };
 
+      // PGCreateOrder in SDK v5 requires (request, xRequestId, xIdempotencyKey)
+      // We already set x_api_version in the instance via Cashfree constructor if needed, 
+      // but the method signature actually takes the body FIRST.
       const response = await cashfree.PGCreateOrder(orderRequest);
-      
+
       await storage.createPayment({
         razorpayOrderId: orderId,
         amount: service.price,
@@ -159,9 +166,9 @@ export async function registerRoutes(
         return res.status(500).json({ error: "Payment gateway not configured" });
       }
 
-      const response = await cashfree.PGOrderFetchPayments(orderId);
+      const response = await cashfree.PGOrderFetchPayments("2025-01-01", null, null, orderId);
       const payments = response.data;
-      
+
       const successfulPayment = payments?.find(
         (p: any) => p.payment_status === "SUCCESS"
       );
@@ -212,18 +219,18 @@ export async function registerRoutes(
       const token = req.cookies?.booking_token || req.query.token;
 
       if (!token) {
-        return res.status(401).json({ 
-          authorized: false, 
-          error: "No booking token provided. Please complete payment first." 
+        return res.status(401).json({
+          authorized: false,
+          error: "No booking token provided. Please complete payment first."
         });
       }
 
       const bookingToken = await storage.getBookingToken(token);
 
       if (!bookingToken) {
-        return res.status(401).json({ 
-          authorized: false, 
-          error: "Invalid or expired booking token. Please complete payment first." 
+        return res.status(401).json({
+          authorized: false,
+          error: "Invalid or expired booking token. Please complete payment first."
         });
       }
 
