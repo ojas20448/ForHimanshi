@@ -1,0 +1,26 @@
+Note: Unnecessary use of -X or --request, POST is already inferred.
+* Host localhost:5001 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:5001...
+*   Trying 127.0.0.1:5001...
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Connected to localhost (127.0.0.1) port 5001
+* using HTTP/1.x
+> POST /api/payments/create-order HTTP/1.1
+> Host: localhost:5001
+> User-Agent: curl/8.13.0
+> Accept: */*
+>  Content-Type: application/json
+> Content-Length: 141
+> Content-Type: application/x-www-form-urlencoded
+> 
+} [141 bytes data]
+* upload completely sent off: 141 bytes
+< HTTP/1.1 400 Bad Request
+< Connection: close
+< 
+{ [0 bytes data]
+100   141    0     0  100   141      0    686 --:--:-- --:--:-- --:--:--   684
+* shutting down connection #0

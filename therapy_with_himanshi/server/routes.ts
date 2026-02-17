@@ -1,7 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertContactSchema, services } from "@shared/schema";
+import { insertContactSchema, services } from "../shared/schema";
 import { Cashfree, CFEnvironment } from "cashfree-pg";
 import crypto from "crypto";
 import { URL } from "url";

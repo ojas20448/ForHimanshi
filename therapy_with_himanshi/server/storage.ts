@@ -1,9 +1,9 @@
-import { 
-  type User, type InsertUser, 
+import {
+  type User, type InsertUser,
   type Contact, type InsertContact,
   type Payment, type InsertPayment,
   type BookingToken, type InsertBookingToken
-} from "@shared/schema";
+} from "../shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -92,7 +92,7 @@ export class MemStorage implements IStorage {
   async updatePayment(orderId: string, data: Partial<Payment>): Promise<Payment | undefined> {
     const payment = this.payments.get(orderId);
     if (!payment) return undefined;
-    
+
     const updated: Payment = {
       ...payment,
       ...data,
@@ -117,26 +117,26 @@ export class MemStorage implements IStorage {
   async getBookingToken(token: string): Promise<BookingToken | undefined> {
     const bookingToken = this.bookingTokens.get(token);
     if (!bookingToken) return undefined;
-    
+
     if (new Date() > bookingToken.expiresAt) {
       return undefined;
     }
-    
+
     return bookingToken;
   }
 
   async consumeBookingToken(token: string): Promise<BookingToken | undefined> {
     const bookingToken = this.bookingTokens.get(token);
     if (!bookingToken) return undefined;
-    
+
     if (new Date() > bookingToken.expiresAt) {
       return undefined;
     }
-    
+
     if (bookingToken.consumedAt) {
       return undefined;
     }
-    
+
     const updated: BookingToken = {
       ...bookingToken,
       consumedAt: new Date(),

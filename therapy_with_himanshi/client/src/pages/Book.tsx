@@ -108,7 +108,8 @@ export default function Book() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create payment order");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to create payment order");
       }
 
       const data = await response.json();
