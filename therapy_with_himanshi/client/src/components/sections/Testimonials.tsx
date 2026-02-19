@@ -6,27 +6,21 @@ import { Button } from "@/components/ui/button";
 const testimonials = [
     {
         id: 1,
-        text: "Himanshi creates such a safe, non-judgmental container. I felt truly heard for the first time in years. The IFS approach helped me understand parts of myself I used to fight against.",
+        text: "I couldn't have asked for a better therapist. Himanshi is truly my Dr. Jug from Dear Zindagi. She has helped me understand so many things with nuance and beauty and shown me that I am capable of navigating life's complexities. I always used to wonder what my emotions were trying to tell me. Through our sessions, I've learned to see fear not just as something negative but also as a way of protection. With her kindness and empathy, she has helped me discover my potential, understand my emotions more clearly, and build a set of strategies I can turn to in difficult times. I am deeply grateful for her presence and guidance.",
         author: "Client A.",
         tag: "Online Therapy"
     },
     {
         id: 2,
-        text: "The pacing of our sessions is exactly what I needed. Slow, intentional, and deeply respectful of my nervous system. I'm learning to be kinder to myself.",
+        text: "I have been in therapy for four months with Himanshi. In this time she has given me a safe and non judgemental space to express my emotions in various tough phases in my life. She has gradually helped me with my negative thought patterns and I have seen significant changes in how I face challenges in my life. Thank you Himanshi for the patience, care and understanding you provided in the therapeutic space.",
         author: "Client S.",
         tag: "Trauma Informed"
     },
     {
         id: 3,
-        text: "As a queer individual, finding a therapist who truly 'gets it' without me having to educate them was a relief. Himanshi affirmed my experience from day one.",
+        text: "I absolutely love Himanshi. She has been a ray of hope in moments when everything felt unclear. She listens without judgment and makes you feel safe, understood, and supported. She feels like a friend who genuinely cares and offers guidance that actually helps. I'm really grateful for the growth and clarity I've experienced through therapy with her.",
         author: "Client M.",
-        tag: "Queer Affirmative"
-    },
-    {
-        id: 4,
-        text: "I was skeptical about online therapy, but Himanshi's presence transcends the screen. It feels just as intimate and holding as an in-person session.",
-        author: "Client R.",
-        tag: "Online Therapy"
+        tag: "Person-Centred"
     }
 ];
 
