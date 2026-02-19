@@ -9,6 +9,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { initializeCashfree } from "./Payment";
+import upiQrCode from "@assets/upi_qr_code.png";
 // Cal.com will be initialized via script injection
 
 const services = [
@@ -150,7 +151,7 @@ export default function Book() {
   };
 
   const copyUpiId = () => {
-    navigator.clipboard.writeText("himanshisahni@ybl");
+    navigator.clipboard.writeText("himanshisahni001@okicici");
     toast({
       title: "Copied! 📋",
       description: "UPI ID copied to clipboard",
@@ -366,8 +367,14 @@ export default function Book() {
                               </p>
                             </div>
 
+                            <div className="flex justify-center mb-4">
+                              <div className="bg-white p-4 rounded-2xl shadow-md border border-border/50">
+                                <img src={upiQrCode} alt="UPI QR Code" className="w-48 h-48 object-contain" />
+                              </div>
+                            </div>
+
                             <div className="bg-secondary/30 p-4 rounded-xl flex items-center justify-between border border-secondary">
-                              <span className="font-mono text-foreground font-medium text-lg">himanshisahni@ybl</span>
+                              <span className="font-mono text-foreground font-medium text-lg">himanshisahni001@okicici</span>
                               <Button
                                 size="icon"
                                 variant="ghost"
