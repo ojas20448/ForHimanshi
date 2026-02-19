@@ -1,31 +1,8 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import image1 from "@assets/WhatsApp_Image_2025-12-11_at_00.59.14_(1)_1765616014879.jpeg";
-import image2 from "@assets/WhatsApp_Image_2025-12-11_at_00.59.14_1765616014879.jpeg";
-import image3 from "@assets/WhatsApp_Image_2025-12-11_at_00.59.59_1765616014879.jpeg";
-import image4 from "@assets/himanshi_2.jpeg";
-
-const images = [image4, image1, image2, image3];
+import aboutImage from "@assets/WhatsApp_Image_2025-12-11_at_00.59.14_(1)_1765616014879.jpeg";
 
 export function AboutSection() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
-
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
-  };
 
   return (
     <section id="about" className="py-24 md:py-32 bg-background relative overflow-hidden">
@@ -65,9 +42,9 @@ export function AboutSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden rotate-2 hover:rotate-0 transition-transform duration-500 ease-out">
+            <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden transition-transform duration-500 ease-out">
               <img
-                src={image4}
+                src={aboutImage}
                 alt="Abstract inner landscape"
                 className="w-full h-full object-cover"
               />
@@ -125,46 +102,20 @@ export function AboutSection() {
             </div>
           </motion.div>
 
-          {/* Interactive Image Slider */}
+          {/* Image - Single Photo */}
           <div className="md:col-span-5 md:col-start-8 md:order-2 order-1 relative">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative aspect-[4/5] rounded-[2rem] overflow-hidden -rotate-2 hover:rotate-0 transition-transform duration-500 ease-out border-4 border-white"
+              className="relative aspect-[4/5] rounded-[2rem] overflow-hidden transition-transform duration-500 ease-out border-4 border-white shadow-2xl"
             >
-              {images.map((img, index) => (
-                <img
-                  key={index}
-                  src={img}
-                  alt={`Himanshi Sahni ${index + 1}`}
-                  className={`absolute inset-0 w-full h-full transition-all duration-700 ${index === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-110"
-                    } ${index === 2 ? "object-contain bg-secondary/20 p-4" : "object-cover"}`}
-                />
-              ))}
-
-              {/* Slider Controls */}
-              <div className="absolute inset-0 flex items-center justify-between p-4 opacity-0 hover:opacity-100 transition-opacity duration-300">
-                <button onClick={goToPrevious} className="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/40 transition-colors">
-                  <ChevronLeft size={24} />
-                </button>
-                <button onClick={goToNext} className="p-2 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/40 transition-colors">
-                  <ChevronRight size={24} />
-                </button>
-              </div>
-
-              {/* Dots */}
-              <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2">
-                {images.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentIndex(index)}
-                    className={`h-1.5 rounded-full transition-all duration-300 shadow-sm ${index === currentIndex ? "bg-white w-6" : "bg-white/50 w-1.5 hover:bg-white/80"
-                      }`}
-                  />
-                ))}
-              </div>
+              <img
+                src={aboutImage}
+                alt="Himanshi Sahni"
+                className="w-full h-full object-cover"
+              />
             </motion.div>
           </div>
         </div>
