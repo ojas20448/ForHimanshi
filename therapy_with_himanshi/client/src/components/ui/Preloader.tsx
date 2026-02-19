@@ -35,15 +35,14 @@ export function Preloader() {
                     />
                 </motion.div>
 
-                <div className="h-8 overflow-hidden">
+                <div className="h-20 flex items-center justify-center overflow-visible">
                     <AnimatePresence>
                         {showText && (
                             <motion.h2
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.8, ease: "easeOut" }}
-                                className="text-xl md:text-2xl font-medium text-primary tracking-wide"
-                                style={{ fontFamily: "'Snell Roundhand', 'Brush Script MT', cursive" }}
+                                className="font-script text-[23px] md:text-[27px] font-medium text-black tracking-wide"
                             >
                                 {tagline}
                             </motion.h2>

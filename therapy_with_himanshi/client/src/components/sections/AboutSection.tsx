@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 
 import aboutImage from "@assets/WhatsApp_Image_2025-12-11_at_00.59.14_(1)_1765616014879.jpeg";
+import shiftImage from "@assets/himanshi_1.jpeg";
 
 export function AboutSection() {
 
@@ -11,6 +12,12 @@ export function AboutSection() {
       <div className="container mx-auto px-4 md:px-6">
         {/* Intro Text */}
         <motion.div
+          // ... (omitting unchanged lines for brevity in search match, but usually better to match precise block)
+          // Actually, I'll allow multiple replacements in one go or just do two chunks.
+          // Re-reading 'replace_file_content' documentation. I can't do multiple chunks with 'replace_file_content'.
+          // I should use 'multi_replace_file_content' if I need to change the import AND the usage, as they are far apart.
+          // Import is at line 3. Usage is at line 47.
+          // So I will use `multi_replace_file_content`.
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -44,7 +51,7 @@ export function AboutSection() {
           >
             <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden transition-transform duration-500 ease-out">
               <img
-                src={aboutImage}
+                src={shiftImage}
                 alt="Abstract inner landscape"
                 className="w-full h-full object-cover"
               />
@@ -65,7 +72,7 @@ export function AboutSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <h3 className="font-heading text-3xl md:text-4xl text-foreground">A Space for Shifts</h3>
+            <h3 className="font-display text-4xl md:text-5xl text-foreground">A Space for Shifts</h3>
             <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
               <p>
                 The intention here is twofold: to offer you a grounded, relational space to understand your inner landscape more deeply, and to support you to make the shifts you've been longing for.
@@ -87,7 +94,7 @@ export function AboutSection() {
             transition={{ duration: 0.8 }}
           >
             <span className="text-primary font-medium tracking-wide uppercase text-sm">About Me</span>
-            <h3 className="font-heading text-3xl md:text-4xl text-foreground">Himanshi Sahni <span className="text-xl text-muted-foreground font-sans font-normal">(she/her)</span></h3>
+            <h3 className="font-display text-4xl md:text-5xl text-foreground">Himanshi Sahni <span className="text-xl text-muted-foreground font-sans font-normal">(she/her)</span></h3>
 
             <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
               <p>
