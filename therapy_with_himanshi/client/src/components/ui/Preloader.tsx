@@ -42,7 +42,8 @@ export function Preloader() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.8, ease: "easeOut" }}
-                                className="font-heading text-xl md:text-2xl font-medium text-primary tracking-wide"
+                                className="text-xl md:text-2xl font-medium text-primary tracking-wide"
+                                style={{ fontFamily: "'Snell Roundhand', 'Brush Script MT', cursive" }}
                             >
                                 {tagline}
                             </motion.h2>
