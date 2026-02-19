@@ -5,12 +5,12 @@ import { Link } from "wouter";
 export function Hero() {
 
   return (
-    <section className="relative min-h-[calc(100vh-80px)] mt-[80px] flex items-center bg-white overflow-hidden">
+    <section className="relative min-h-[calc(100vh-80px)] mt-[80px] flex items-center bg-gradient-to-b from-white to-gray-50 overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl opacity-60" />
-        <div className="absolute top-1/4 right-0 w-[800px] h-[800px] bg-[hsl(var(--accent-pink))]/70 rounded-full blur-[120px] opacity-90 mix-blend-multiply" />
-        <div className="absolute -bottom-32 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl opacity-50" />
+        <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/8 rounded-full blur-3xl opacity-50" />
+        <div className="absolute top-1/4 right-0 w-[800px] h-[800px] bg-gray-200/40 rounded-full blur-[120px] opacity-60 mix-blend-multiply" />
+        <div className="absolute -bottom-32 left-1/4 w-[600px] h-[600px] bg-primary/8 rounded-full blur-3xl opacity-40" />
       </div>
 
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-0">
@@ -46,9 +46,9 @@ export function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.5 }}
-              className="text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed font-light"
+              className="text-lg md:text-xl text-foreground/70 max-w-2xl leading-relaxed font-normal"
             >
-              A space that centres your lived experience and honours the complexity of your inner landscape!
+              Manzar is inward-facing. It is the memories that shaped us, the emotions we've learned to hold quietly, and the stories that continue to echo within.
             </motion.p>
 
             <motion.div
