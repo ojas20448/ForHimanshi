@@ -21,6 +21,12 @@ const testimonials = [
         text: "I absolutely love Himanshi. She has been a ray of hope in moments when everything felt unclear. She listens without judgment and makes you feel safe, understood, and supported. She feels like a friend who genuinely cares and offers guidance that actually helps. I'm really grateful for the growth and clarity I've experienced through therapy with her.",
         author: "Client M.",
         tag: "Person-Centred"
+    },
+    {
+        id: 4,
+        text: "I came to her when I was really struggling with depression, no job, and no routine - just a cycle of sleeping, eating, and overthinking. I couldn't imagine getting back on my feet or functioning normally again. She met me in that space with so much patience and compassion. She didn't rush my healing or invalidate my pain. Instead, she helped me slowly rebuild starting with small routines, small goals, and small steps that eventually became progress. Today, I feel more stable, I'm grateful for the safe and supportive space she has created for me.",
+        author: "Client R.",
+        tag: "Compassionate Care"
     }
 ];
 
