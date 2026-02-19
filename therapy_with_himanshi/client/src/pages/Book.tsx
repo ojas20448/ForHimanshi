@@ -68,7 +68,7 @@ export default function Book() {
           container.innerHTML = ""; // Clear existing widget to prevent duplicates
           // @ts-ignore
           window.Calendly.initInlineWidget({
-            url: "https://calendly.com/himanshi-therapy/therapy-session",
+            url: "https://calendly.com/manzartherapy/30min?month=2026-02",
             parentElement: container,
             prefill: {},
             utm: {}
@@ -268,7 +268,7 @@ export default function Book() {
                       <div className="p-4 text-center border-t border-white/20 bg-white/30">
                         <p className="text-sm text-gray-600 mb-2">Can't see the calendar?</p>
                         <a
-                          href="https://calendly.com/himanshi-therapy/therapy-session"
+                          href="https://calendly.com/manzartherapy/30min?month=2026-02"
                           target="_blank"
                           rel="noreferrer"
                           className="inline-flex items-center gap-2 text-primary font-medium hover:underline bg-white/50 px-4 py-2 rounded-full shadow-sm border border-white/50"
