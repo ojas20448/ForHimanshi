@@ -65,17 +65,17 @@
   --popover: 0 0% 100%;
   --popover-foreground: 20 7% 20%;
 
-  /* Primary: User Specified Green #234023 */
-  --primary: 120 29% 19%;
+  /* Primary: User Specified Green - Darker */
+  --primary: 120 29% 13%;
   --primary-foreground: 0 0% 98%;
 
   /* Secondary: Soft Earth/Beige - Natural warmth */
   --secondary: 40 20% 94%;
   --secondary-foreground: 120 29% 15%;
 
-  /* Muted: Cool Gray/Green tint */
+  /* Muted: Cool Gray/Green tint - Darker */
   --muted: 153 10% 94%;
-  --muted-foreground: 153 10% 40%;
+  --muted-foreground: 153 10% 30%;
 
   /* Accent: Pale Sage for hovers/backgrounds */
   --accent: 153 20% 94%;

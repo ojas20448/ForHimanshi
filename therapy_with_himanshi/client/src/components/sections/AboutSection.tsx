@@ -26,7 +26,7 @@ export function AboutSection() {
           />
           <span className="text-primary font-medium tracking-wide uppercase text-sm mb-4 block">My Philosophy</span>
           <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-8 leading-tight">
-            Understanding the inner <span className="text-balance italic text-primary/80">landscape</span> you carry.
+            Understanding the inner <span className="text-balance italic text-primary">landscape</span> you carry.
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto font-light">
             Manzar is inward-facing. It is the memories that shaped us, the emotions we've learned to hold quietly, and the stories that continue to echo within.
