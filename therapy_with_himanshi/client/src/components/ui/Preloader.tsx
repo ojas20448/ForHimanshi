@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "@assets/logo.png";
+import logo from "@assets/Manzar.svg";
 import { useEffect, useState } from "react";
 
 export function Preloader() {
@@ -31,7 +31,7 @@ export function Preloader() {
                     <img
                         src={logo}
                         alt="Manzar Therapy"
-                        className="w-40 md:w-56 object-contain mb-8 mix-blend-multiply"
+                        className="w-40 md:w-56 object-contain mb-8"
                     />
                 </motion.div>
 
