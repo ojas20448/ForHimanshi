@@ -126,6 +126,7 @@ export default function Payment() {
     setOrderStatus("processing");
 
     try {
+      console.log("Creating payment order for:", selectedService.id);
       // Create order
       const response = await fetch("/api/payments/create-order", {
         method: "POST",
@@ -141,30 +142,36 @@ export default function Payment() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to create order");
+        console.error("Order creation failed:", data);
+        throw new Error(data.error || "Failed to create order");
       }
+
+      console.log("Order created successfully:", data.orderId);
 
       // Initialize payment
       const checkoutOptions = {
-        paymentSessionId: data.payment_session_id,
+        paymentSessionId: data.paymentSessionId,
         redirectTarget: "_self", // Redirect to self to handle mobile/popup blocks better
       };
 
+      console.log("Initializing Cashfree checkout...");
       const cf = await initializeCashfree();
-      cf.checkout(checkoutOptions).then((result: any) => {
-        if (result.error) {
-          console.error("Payment Error:", result.error);
-          setOrderStatus("failure");
-          toast({
-            title: "Payment Failed",
-            description: result.error.message || "Something went wrong",
-            variant: "destructive",
-          });
-        }
-        if (result.redirect) {
-          console.log("Payment Redirect");
-        }
-      });
+      const result = await cf.checkout(checkoutOptions);
+      
+      if (result.error) {
+        console.error("Cashfree checkout error:", result.error);
+        setOrderStatus("failure");
+        toast({
+          title: "Payment Failed",
+          description: result.error.message || "Something went wrong",
+          variant: "destructive",
+        });
+        setLoading(false);
+      }
+      if (result.redirect) {
+        console.log("Payment Redirect - waiting for callback");
+      }
+      return; // Don't setLoading(false) here as payment is in progress
     } catch (error: any) {
       console.error("Payment Error:", error);
       setOrderStatus("failure");
@@ -173,7 +180,6 @@ export default function Payment() {
         description: error.message || "Failed to initiate payment",
         variant: "destructive",
       });
-    } finally {
       setLoading(false);
     }
   };

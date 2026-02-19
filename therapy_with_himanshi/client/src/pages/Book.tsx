@@ -91,11 +91,10 @@ export default function Book() {
   }, []);
 
   const handleCashfreePayment = async () => {
-    // ... (rest of payment logic remains unchanged)
-    // ... (rest of payment logic remains unchanged)
     setPaymentProcessing(true);
 
     try {
+      console.log("Creating payment order for:", selectedService.id);
       const response = await fetch("/api/payments/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -109,24 +108,29 @@ export default function Book() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.error("Order creation failed:", errorData);
         throw new Error(errorData.error || "Failed to create payment order");
       }
 
       const data = await response.json();
+      console.log("Order created successfully:", data.orderId);
 
       const checkoutOptions = {
         paymentSessionId: data.paymentSessionId,
         redirectTarget: "_self", // Use _self for better mobile handling
       };
 
+      console.log("Initializing Cashfree checkout...");
       const cf = await initializeCashfree();
       const result = await cf.checkout(checkoutOptions);
 
       if (result.error) {
+        console.error("Cashfree checkout error:", result.error);
         throw new Error(result.error.message || "Payment failed");
       }
 
       if (result.paymentDetails) {
+        console.log("Payment successful:", result.paymentDetails);
         setBookingSubmitted(true); // Mark as paid/submitted
         toast({
           title: "Payment Successful! 🎉",
@@ -257,7 +261,7 @@ export default function Book() {
                       <div
                         id="calendly-embed"
                         className="w-full bg-white relative rounded-b-xl"
-                        style={{ height: "1000px" }}
+                        style={{ minHeight: "700px", height: "100vh", maxHeight: "1000px" }}
                       />
 
                       {/* Fallback for visibility issues */}

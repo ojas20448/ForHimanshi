@@ -127,7 +127,9 @@ export async function registerRoutes(
       // PGCreateOrder in SDK v5 requires (request, xRequestId, xIdempotencyKey)
       // We already set x_api_version in the instance via Cashfree constructor if needed, 
       // but the method signature actually takes the body FIRST.
+      console.log("Creating Cashfree order:", orderId);
       const response = await cashfree.PGCreateOrder(orderRequest);
+      console.log("Cashfree order created successfully:", response.data);
 
       await storage.createPayment({
         razorpayOrderId: orderId,
@@ -161,13 +163,17 @@ export async function registerRoutes(
         return res.status(400).json({ error: "Missing order ID" });
       }
 
+      console.log("Verifying payment for order:", orderId);
+
       const cashfree = getCashfreeClient();
       if (!cashfree) {
         return res.status(500).json({ error: "Payment gateway not configured" });
       }
 
-      const response = await cashfree.PGOrderFetchPayments("2025-01-01", null, null, orderId);
+      const response = await cashfree.PGOrderFetchPayments("2023-08-01", orderId);
       const payments = response.data;
+
+      console.log("Payment fetch response:", JSON.stringify(payments, null, 2));
 
       const successfulPayment = payments?.find(
         (p: any) => p.payment_status === "SUCCESS"

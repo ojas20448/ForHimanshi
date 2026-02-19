@@ -103,7 +103,9 @@ app.post("/api/payments/create-order", async (req: Request, res: Response) => {
       order_note: service.title
     };
 
+    console.log("Creating Cashfree order:", orderId);
     const response = await cashfree.PGCreateOrder(orderRequest);
+    console.log("Cashfree order created successfully:", response.data);
 
     res.json({
       orderId: orderId,
@@ -128,13 +130,17 @@ app.post("/api/payments/verify", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Missing order ID" });
     }
 
+    console.log("Verifying payment for order:", orderId);
+
     const cashfree = getCashfreeClient();
     if (!cashfree) {
       return res.status(500).json({ error: "Payment gateway not configured" });
     }
 
-    const response = await cashfree.PGOrderFetchPayments(orderId);
+    const response = await cashfree.PGOrderFetchPayments("2023-08-01", orderId);
     const payments = response.data;
+    
+    console.log("Payment fetch response:", JSON.stringify(payments, null, 2));
     
     const successfulPayment = payments?.find(
       (p: any) => p.payment_status === "SUCCESS"
