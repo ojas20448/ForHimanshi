@@ -103,8 +103,8 @@ export function Contact() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Email</p>
-                  <a href="mailto:himanshi.therapy@gmail.com" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
-                    himanshi.therapy@gmail.com
+                  <a href="mailto:manzartherapy@gmail.com" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
+                    manzartherapy@gmail.com
                   </a>
                 </div>
               </div>
@@ -115,8 +115,8 @@ export function Contact() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Instagram</p>
-                  <a href="https://instagram.com/therapy.w.himanshi" target="_blank" rel="noreferrer" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
-                    @therapy.w.himanshi
+                  <a href="https://instagram.com/manzartherapy" target="_blank" rel="noreferrer" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
+                    @manzartherapy
                   </a>
                 </div>
               </div>

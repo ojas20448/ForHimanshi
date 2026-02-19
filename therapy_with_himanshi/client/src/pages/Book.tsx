@@ -381,7 +381,7 @@ export default function Book() {
                             <div className="bg-yellow-50/50 p-4 rounded-xl border border-yellow-100 text-sm text-yellow-800 flex gap-3">
                               <Sparkles size={18} className="shrink-0 text-yellow-600 mt-0.5" />
                               <p>
-                                After payment, send a screenshot to <strong>himanshi.therapy@gmail.com</strong> or WhatsApp.
+                                After payment, send a screenshot to <strong>manzartherapy@gmail.com</strong> or WhatsApp.
                               </p>
                             </div>
                           </TabsContent>

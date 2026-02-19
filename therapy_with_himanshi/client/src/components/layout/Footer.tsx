@@ -21,7 +21,7 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-4 pt-4">
               <a
-                href="https://instagram.com/therapy.w.himanshi"
+                href="https://instagram.com/manzartherapy"
                 target="_blank"
                 rel="noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300"
@@ -30,7 +30,7 @@ export function Footer() {
                 <Instagram size={20} />
               </a>
               <a
-                href="mailto:himanshi.therapy@gmail.com"
+                href="mailto:manzartherapy@gmail.com"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300"
                 aria-label="Email"
               >
@@ -71,7 +71,7 @@ export function Footer() {
             <ul className="space-y-4 text-white/60">
               <li className="flex items-start gap-3">
                 <Mail size={18} className="mt-1 shrink-0" />
-                <span className="text-sm">himanshi.therapy@gmail.com</span>
+                <span className="text-sm">manzartherapy@gmail.com</span>
               </li>
               <li className="flex items-start gap-3">
                 <div className="mt-1 shrink-0">
