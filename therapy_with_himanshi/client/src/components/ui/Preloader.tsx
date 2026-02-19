@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "@assets/Manzar.svg";
+import logo from "@/assets/Manzar_cropped.svg";
 import { useEffect, useState } from "react";
 
 export function Preloader() {
