@@ -3,6 +3,15 @@ import fs from "fs";
 import path from "path";
 
 export function serveStatic(app: Express) {
+  // Skip static file serving in serverless environments (Netlify, AWS Lambda)
+  // Static files are served by the CDN/platform directly
+  const isServerless = process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.LAMBDA_TASK_ROOT;
+  
+  if (isServerless) {
+    console.log("Running in serverless environment - skipping static file serving");
+    return;
+  }
+
   const distPath = path.resolve(__dirname, "public");
   if (!fs.existsSync(distPath)) {
     throw new Error(
