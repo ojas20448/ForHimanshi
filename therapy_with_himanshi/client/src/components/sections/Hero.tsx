@@ -1,16 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import heroBg from "@assets/hero_bg.png";
 
 export function Hero() {
 
   return (
-    <section className="relative min-h-[calc(100vh-80px)] mt-[80px] flex items-center bg-gradient-to-b from-white to-gray-50 overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute -top-20 -left-20 w-96 h-96 bg-primary/8 rounded-full blur-3xl opacity-50" />
-        <div className="absolute top-1/4 right-0 w-[800px] h-[800px] bg-gray-200/40 rounded-full blur-[120px] opacity-60 mix-blend-multiply" />
-        <div className="absolute -bottom-32 left-1/4 w-[600px] h-[600px] bg-primary/8 rounded-full blur-3xl opacity-40" />
+    <section className="relative min-h-[calc(100vh-80px)] mt-[80px] flex items-center overflow-hidden">
+      {/* Background image with blur */}
+      <div className="absolute inset-0 w-full h-full">
+        <div 
+          className="absolute inset-0 w-full h-full bg-cover bg-center blur-sm scale-105"
+          style={{ backgroundImage: `url(${heroBg})` }}
+        />
+        {/* Overlay for text readability */}
+        <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px]" />
       </div>
 
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-0">
