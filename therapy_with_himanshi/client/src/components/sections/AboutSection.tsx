@@ -36,7 +36,7 @@ export function AboutSection() {
             Understanding the inner <span className="text-balance italic text-primary">landscape</span> you carry.
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto font-light">
-            Manzar is inward-facing. It is the memories that shaped us, the emotions we've learned to hold quietly, and the stories that continue to echo within.
+            This is a space to slow down, turn inward, and meet yourself with curiosity rather than judgment — gently, at your own pace.
           </p>
         </motion.div>
 
