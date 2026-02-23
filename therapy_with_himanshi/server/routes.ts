@@ -34,7 +34,6 @@ function resolveHttpsBaseUrl(req: Request): string | null {
 
   try {
     const url = new URL(rawBase);
-    // Only force HTTPS if not on localhost and not explicitly requested sandbox
     if (url.hostname !== "localhost" && url.hostname !== "127.0.0.1" && url.protocol !== "https:") {
       url.protocol = "https:";
     }
@@ -45,6 +44,14 @@ function resolveHttpsBaseUrl(req: Request): string | null {
   } catch {
     return null;
   }
+}
+
+// Simple admin key check for protected endpoints
+function isAdminAuthorized(req: Request): boolean {
+  const adminKey = process.env.ADMIN_API_KEY;
+  if (!adminKey) return false;
+  const providedKey = req.headers["x-admin-key"] || req.query.admin_key;
+  return providedKey === adminKey;
 }
 
 export async function registerRoutes(
@@ -61,7 +68,11 @@ export async function registerRoutes(
     }
   });
 
+  // Protected: requires admin API key to read contact submissions
   app.get("/api/contacts", async (req, res) => {
+    if (!isAdminAuthorized(req)) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
     try {
       const contacts = await storage.getContacts();
       res.json(contacts);
@@ -70,26 +81,22 @@ export async function registerRoutes(
     }
   });
 
-  app.get("/api/services", async (req, res) => {
+  app.get("/api/services", async (_req, res) => {
     res.json(services);
   });
 
-  app.get("/api/health", async (req, res) => {
-    const clientId = process.env.CASHFREE_CLIENT_ID?.trim();
+  app.get("/api/health", async (_req, res) => {
     res.json({
       status: "ok",
       cashfree: {
-        configured: !!clientId && !!process.env.CASHFREE_CLIENT_SECRET,
-        clientIdPrefix: clientId?.substring(0, 12) || "not set"
-      }
+        configured: !!process.env.CASHFREE_CLIENT_ID && !!process.env.CASHFREE_CLIENT_SECRET,
+      },
     });
   });
 
   app.post("/api/payments/create-order", async (req: Request, res: Response) => {
     try {
       const { serviceId, customerName, customerEmail, customerPhone } = req.body;
-
-
 
       const service = services.find((s) => s.id === serviceId);
       if (!service) {
@@ -116,20 +123,15 @@ export async function registerRoutes(
           customer_id: `cust_${Date.now()}`,
           customer_phone: customerPhone || "9999999999",
           customer_name: customerName || "Customer",
-          customer_email: customerEmail || "customer@example.com"
+          customer_email: customerEmail || "customer@example.com",
         },
         order_meta: {
-          return_url: `${baseUrl}/book?order_id={order_id}`
+          return_url: `${baseUrl}/book?order_id={order_id}`,
         },
-        order_note: service.title
+        order_note: service.title,
       };
 
-      // PGCreateOrder in SDK v5 requires (request, xRequestId, xIdempotencyKey)
-      // We already set x_api_version in the instance via Cashfree constructor if needed, 
-      // but the method signature actually takes the body FIRST.
-      console.log("Creating Cashfree order:", orderId);
       const response = await cashfree.PGCreateOrder(orderRequest);
-      console.log("Cashfree order created successfully:", response.data);
 
       await storage.createPayment({
         razorpayOrderId: orderId,
@@ -163,17 +165,14 @@ export async function registerRoutes(
         return res.status(400).json({ error: "Missing order ID" });
       }
 
-      console.log("Verifying payment for order:", orderId);
-
       const cashfree = getCashfreeClient();
       if (!cashfree) {
         return res.status(500).json({ error: "Payment gateway not configured" });
       }
 
-      const response = await cashfree.PGOrderFetchPayments("2023-08-01", orderId);
+      // Use current API version date
+      const response = await cashfree.PGOrderFetchPayments("2025-01-01", orderId);
       const payments = response.data;
-
-      console.log("Payment fetch response:", JSON.stringify(payments, null, 2));
 
       const successfulPayment = payments?.find(
         (p: any) => p.payment_status === "SUCCESS"
@@ -227,14 +226,24 @@ export async function registerRoutes(
       if (!token) {
         return res.status(401).json({
           authorized: false,
-          error: "No booking token provided. Please complete payment first."
+          error: "No booking token provided. Please complete payment first.",
         });
       }
 
       const bookingToken = await storage.getBookingToken(token);
 
       if (!bookingToken) {
-        return res.status(401).json({ authorized: false });
+        return res.status(401).json({ authorized: false, error: "Invalid token" });
+      }
+
+      // Check token expiry
+      if (bookingToken.expiresAt && new Date(bookingToken.expiresAt) < new Date()) {
+        return res.status(401).json({ authorized: false, error: "Token has expired" });
+      }
+
+      // Check if already consumed
+      if (bookingToken.consumedAt) {
+        return res.status(401).json({ authorized: false, error: "Token already used" });
       }
 
       res.json({ authorized: true });

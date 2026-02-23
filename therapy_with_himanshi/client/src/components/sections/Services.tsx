@@ -1,8 +1,9 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, Brain, Laptop, MapPin, Globe, Clock, IndianRupee, Users, Gift, Sparkles, ArrowRight } from "lucide-react";
+import { Heart, Brain, Laptop, MapPin, Globe, Clock, IndianRupee, Users, Gift, Sparkles, ArrowRight, UserCheck, CloudRain, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import { services } from "@shared/services";
 
 const serviceIcons: Record<string, typeof Laptop> = {
   "online-therapy": Laptop,
@@ -10,37 +11,6 @@ const serviceIcons: Record<string, typeof Laptop> = {
   "nri-therapy": Globe,
   "gift-session": Gift,
 };
-
-const services = [
-  {
-    id: "online-therapy",
-    title: "1:1 Online Therapy",
-    description: "Personalized therapy sessions from the comfort of your own space via secure video call. Ideal for consistent, accessible care.",
-    duration: 60,
-    price: 1000,
-  },
-  {
-    id: "offline-therapy",
-    title: "1:1 Offline Therapy",
-    description: "In-person therapy sessions available in Delhi/Noida for a deeper, face-to-face connection in a safe, held environment.",
-    duration: 60,
-    price: 1500,
-  },
-  {
-    id: "nri-therapy",
-    title: "1:1 Online Therapy (NRI)",
-    description: "Tailored online therapy sessions for Non-Resident Indians, accommodating different time zones and cultural contexts.",
-    duration: 60,
-    price: 1500,
-  },
-  {
-    id: "gift-session",
-    title: "Gift a Session",
-    description: "Give the gift of mental wellness. Purchase a therapy session for a loved one and help them begin their healing journey.",
-    duration: 60,
-    price: 1000,
-  },
-];
 
 const concerns = [
   { icon: Brain, label: "Anxiety & Overwhelm" },
@@ -50,8 +20,6 @@ const concerns = [
   { icon: CloudRain, label: "Grief & Loss" },
   { icon: Shield, label: "Trauma & PTSD" },
 ];
-
-import { UserCheck, CloudRain, Shield } from "lucide-react";
 
 export function Services() {
   return (

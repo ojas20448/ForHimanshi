@@ -63,8 +63,8 @@ export function Testimonials() {
                     </p>
                 </div>
 
-                <div className="max-w-5xl mx-auto relative px-4 md:px-12">
-                    <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
+                <div className="max-w-5xl mx-auto relative px-4 md:px-12" role="region" aria-roledescription="carousel" aria-label="Client testimonials">
+                    <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef} aria-live="polite">
                         <div className="flex -ml-4 md:-ml-8">
                             {testimonials.map((item, index) => (
                                 <div className="flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_40%] pl-4 md:pl-8 min-w-0" key={item.id}>

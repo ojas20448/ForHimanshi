@@ -7,7 +7,6 @@ export function Hero() {
 
   return (
     <section className="relative min-h-[calc(100vh-80px)] mt-[80px] flex items-center overflow-hidden">
-      {/* Plain white background */}
       <div className="absolute inset-0 w-full h-full bg-white" />
 
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-0">

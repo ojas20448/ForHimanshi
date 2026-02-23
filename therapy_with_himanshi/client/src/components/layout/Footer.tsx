@@ -61,7 +61,7 @@ export function Footer() {
                 <a href="#faq" className="text-white/60 hover:text-primary-foreground transition-colors inline-block">FAQ</a>
               </li>
               <li>
-                <Link href="/payment" className="text-white/60 hover:text-primary-foreground transition-colors inline-block">Book a Session</Link>
+                <Link href="/book" className="text-white/60 hover:text-primary-foreground transition-colors inline-block">Book a Session</Link>
               </li>
             </ul>
           </div>
@@ -74,22 +74,7 @@ export function Footer() {
                 <span className="text-sm">manzartherapy@gmail.com</span>
               </li>
               <li className="flex items-start gap-3">
-                <div className="mt-1 shrink-0">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-phone"
-                  >
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                </div>
+                <Phone size={18} className="mt-1 shrink-0" />
                 <a href="https://wa.me/919599529780" target="_blank" rel="noreferrer" className="text-sm hover:text-white transition-colors">
                   +91 95995 29780
                 </a>

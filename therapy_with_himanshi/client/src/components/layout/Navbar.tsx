@@ -90,7 +90,7 @@ export function Navbar() {
                 {link.name}
               </a>
             ))}
-            <Link href="/payment" onClick={() => setIsOpen(false)}>
+            <Link href="/book" onClick={() => setIsOpen(false)}>
               <Button className="w-full rounded-full text-lg py-6" size="lg">Book a Session</Button>
             </Link>
           </div>

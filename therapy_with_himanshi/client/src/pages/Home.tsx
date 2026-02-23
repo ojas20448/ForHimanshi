@@ -10,8 +10,9 @@ import { FAQ } from "@/components/sections/FAQ";
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans text-foreground">
+      <a href="#main-content" className="skip-to-content">Skip to content</a>
       <Navbar />
-      <main className="flex-grow">
+      <main id="main-content" className="flex-grow">
         <Hero />
         <AboutSection />
         <Services />

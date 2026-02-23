@@ -21,7 +21,7 @@ import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Valid phone number is required"),
+  phone: z.string().regex(/^\+?[0-9\s\-]{10,15}$/, "Please enter a valid phone number"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
@@ -184,6 +184,7 @@ export function Contact() {
                       <FormLabel className="text-foreground/80">Email</FormLabel>
                       <FormControl>
                         <Input
+                          type="email"
                           placeholder="your@email.com"
                           {...field}
                           className="h-12 rounded-xl bg-white/50 border-gray-200 focus:border-primary/50 focus:bg-white transition-all px-4"
@@ -201,6 +202,7 @@ export function Contact() {
                       <FormLabel className="text-foreground/80">Phone</FormLabel>
                       <FormControl>
                         <Input
+                          type="tel"
                           placeholder="+91 98765 43210"
                           {...field}
                           className="h-12 rounded-xl bg-white/50 border-gray-200 focus:border-primary/50 focus:bg-white transition-all px-4"
