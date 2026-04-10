@@ -11,14 +11,14 @@ export const services = [
     title: "1:1 Offline Therapy",
     description: "In-person therapy sessions available in Delhi/Noida for a deeper, face-to-face connection.",
     duration: 60,
-    price: 1500,
+    price: 2000,
   },
   {
     id: "nri-therapy",
     title: "1:1 Online Therapy (NRI)",
     description: "Tailored online therapy sessions for Non-Resident Indians, accommodating different time zones.",
     duration: 60,
-    price: 1500,
+    price: 2000,
   },
   {
     id: "gift-session",
