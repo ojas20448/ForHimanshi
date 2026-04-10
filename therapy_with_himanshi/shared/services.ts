@@ -4,7 +4,7 @@ export const services = [
     title: "1:1 Online Therapy",
     description: "Personalized therapy sessions from the comfort of your own space via secure video call.",
     duration: 60,
-    price: 1000,
+    price: 1500,
   },
   {
     id: "offline-therapy",
@@ -25,7 +25,7 @@ export const services = [
     title: "Gift a Session",
     description: "Give the gift of mental wellness. Purchase a therapy session for a loved one.",
     duration: 60,
-    price: 1000,
+    price: 1500,
   },
 ] as const;
 
