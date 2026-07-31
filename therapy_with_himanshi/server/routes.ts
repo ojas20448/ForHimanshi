@@ -90,6 +90,10 @@ export async function registerRoutes(
       status: "ok",
       cashfree: {
         configured: !!process.env.CASHFREE_CLIENT_ID && !!process.env.CASHFREE_CLIENT_SECRET,
+        environment: process.env.CASHFREE_ENV || "PRODUCTION",
+      },
+      calcom: {
+        link: process.env.CALCOM_BOOKING_LINK || "himanshi-sahni/therapy-sessions",
       },
     });
   });
@@ -154,6 +158,35 @@ export async function registerRoutes(
       console.error("Error creating order:", error);
       const errorMessage = error?.response?.data?.message || error?.message || "Failed to create payment order";
       res.status(500).json({ error: errorMessage });
+    }
+  });
+
+  app.post("/api/payments/submit-upi", async (req: Request, res: Response) => {
+    try {
+      const { serviceId, customerName, customerEmail, customerPhone, transactionRef, screenshot } = req.body;
+
+      const service = services.find((s) => s.id === serviceId);
+      if (!service) {
+        return res.status(400).json({ error: "Invalid service selected" });
+      }
+
+      const orderId = `upi_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      await storage.createPayment({
+        razorpayOrderId: orderId,
+        amount: service.price,
+        serviceName: service.title,
+        email: customerEmail || null,
+        phone: customerPhone || null,
+        status: "pending_verification",
+        upiScreenshot: screenshot || null,
+        transactionRef: transactionRef || null,
+      });
+
+      res.json({ success: true, orderId });
+    } catch (error: any) {
+      console.error("Error submitting UPI verification:", error);
+      res.status(500).json({ error: "Failed to submit UPI verification" });
     }
   });
 

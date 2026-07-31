@@ -13,19 +13,7 @@ import { initializeCashfree } from "@/lib/cashfree";
 import { services } from "@shared/services";
 import upiQrCode from "@assets/upi_qr_code.png";
 
-// Calendly type declarations
-declare global {
-  interface Window {
-    Calendly?: {
-      initInlineWidget: (opts: {
-        url: string;
-        parentElement: HTMLElement;
-        prefill?: Record<string, unknown>;
-        utm?: Record<string, unknown>;
-      }) => void;
-    };
-  }
-}
+import Cal, { getCalApi } from "@calcom/embed-react";
 
 function getCurrentCalendlyMonth(): string {
   const now = new Date();
@@ -40,12 +28,19 @@ export default function Book() {
   const [selectedService, setSelectedService] = useState(services[0]);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
+  const [calcomLink, setCalcomLink] = useState("himanshi-sahni/therapy-sessions");
 
   // Customer info
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [customerFormErrors, setCustomerFormErrors] = useState<Record<string, string>>({});
+
+  // UPI Payments state
+  const [upiSubmitting, setUpiSubmitting] = useState(false);
+  const [transactionRef, setTransactionRef] = useState("");
+  const [screenshotBase64, setScreenshotBase64] = useState<string | null>(null);
+  const [screenshotError, setScreenshotError] = useState("");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -63,33 +58,33 @@ export default function Book() {
       verifyPayment(orderId);
     }
 
-    // Initialize Calendly
-    const currentMonth = getCurrentCalendlyMonth();
-    const initCalendly = () => {
-      if (window.Calendly) {
-        const container = document.getElementById("calendly-embed");
-        if (container) {
-          container.innerHTML = "";
-          window.Calendly.initInlineWidget({
-            url: `https://calendly.com/manzartherapy/30min?month=${currentMonth}`,
-            parentElement: container,
-            prefill: {},
-            utm: {},
-          });
-        }
+    // Initialize Cal.com UI
+    (async function () {
+      try {
+        const cal = await getCalApi({});
+        cal("ui", {
+          theme: "light",
+          styles: { branding: { brandColor: "#2F5730" } },
+          hideEventTypeDetails: false,
+        });
+      } catch (err) {
+        console.warn("Failed to load Cal.com API", err);
       }
-    };
+    })();
 
-    if (!document.getElementById("calendly-script")) {
-      const script = document.createElement("script");
-      script.id = "calendly-script";
-      script.src = "https://assets.calendly.com/assets/external/widget.js";
-      script.async = true;
-      script.onload = initCalendly;
-      document.body.appendChild(script);
-    } else {
-      initCalendly();
-    }
+    // Fetch dynamic config from health endpoint
+    fetch("/api/health")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.calcom?.link) {
+          let link = data.calcom.link;
+          if (link.startsWith("https://cal.com/")) {
+            link = link.substring("https://cal.com/".length);
+          }
+          setCalcomLink(link);
+        }
+      })
+      .catch((err) => console.warn("Failed to fetch Cal.com link", err));
   }, []);
 
   const verifyPayment = async (orderId: string) => {
@@ -138,6 +133,79 @@ export default function Book() {
 
     setCustomerFormErrors(errors);
     return Object.keys(errors).length === 0;
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      setScreenshotError("File size must be less than 2MB");
+      return;
+    }
+
+    setScreenshotError("");
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setScreenshotBase64(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleUpiSubmit = async () => {
+    if (!validateCustomerForm()) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in your details before submitting.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!screenshotBase64) {
+      setScreenshotError("Please upload your payment screenshot");
+      toast({
+        title: "Screenshot Required",
+        description: "Please upload the payment screenshot to verify transaction.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUpiSubmitting(true);
+    try {
+      const response = await fetch("/api/payments/submit-upi", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceId: selectedService.id,
+          customerName: customerName.trim(),
+          customerEmail: customerEmail.trim(),
+          customerPhone: customerPhone.trim().replace(/\s/g, ""),
+          transactionRef: transactionRef.trim(),
+          screenshot: screenshotBase64,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to submit payment verification");
+      }
+
+      setBookingSubmitted(true);
+      toast({
+        title: "Verification Submitted!",
+        description: "Your payment verification is received and will be checked shortly.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Submission Failed",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setUpiSubmitting(false);
+    }
   };
 
   const handleCashfreePayment = async () => {
@@ -209,7 +277,7 @@ export default function Book() {
     });
   };
 
-  const currentMonth = getCurrentCalendlyMonth();
+  // Cal.com setup
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
@@ -333,17 +401,24 @@ export default function Book() {
                       <CardDescription>Choose a convenient time for your therapy session</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
-                      <div
-                        id="calendly-embed"
-                        className="w-full bg-white relative rounded-b-xl"
-                        style={{ minHeight: "700px", height: "100vh", maxHeight: "1000px" }}
-                      />
+                      <div className="w-full bg-white relative rounded-b-xl p-2 min-h-[550px] sm:min-h-[650px] md:min-h-[700px]">
+                        <Cal
+                          calLink={calcomLink}
+                          style={{ width: "100%", height: "100%", minHeight: "550px" }}
+                          config={{
+                            name: customerName,
+                            email: customerEmail,
+                            theme: "light",
+                            notes: customerPhone ? `Phone: ${customerPhone}` : "",
+                          }}
+                        />
+                      </div>
 
                       {/* Fallback for visibility issues */}
                       <div className="p-4 text-center border-t border-white/20 bg-white/30">
                         <p className="text-sm text-gray-600 mb-2">Can't see the calendar?</p>
                         <a
-                          href={`https://calendly.com/manzartherapy/30min?month=${currentMonth}`}
+                          href={`https://cal.com/${calcomLink}`}
                           target="_blank"
                           rel="noreferrer"
                           className="inline-flex items-center gap-2 text-primary font-medium hover:underline bg-white/50 px-4 py-2 rounded-full shadow-sm border border-white/50"
@@ -498,39 +573,84 @@ export default function Book() {
                             </TabsContent>
 
                             <TabsContent value="upi" className="space-y-6 mt-0">
-                              <div className="text-center py-6">
-                                <div className="w-20 h-20 bg-white rounded-2xl mx-auto shadow-sm flex items-center justify-center mb-4 border border-border/50">
-                                  <IndianRupee className="w-10 h-10 text-primary/60" />
+                              <div className="text-center py-4">
+                                <div className="w-16 h-16 bg-white rounded-2xl mx-auto shadow-sm flex items-center justify-center mb-3 border border-border/50">
+                                  <IndianRupee className="w-8 h-8 text-primary/60" />
                                 </div>
-                                <p className="text-lg font-medium mb-2">Pay via UPI</p>
+                                <p className="text-lg font-medium mb-1">Pay via UPI</p>
                                 <p className="text-muted-foreground text-sm">
-                                  Transfer <strong>{selectedService.price}</strong> to the UPI ID below
+                                  Transfer <strong>₹{selectedService.price}</strong> to the UPI ID or scan the QR below.
                                 </p>
                               </div>
 
-                              <div className="flex justify-center mb-4">
+                              <div className="flex justify-center mb-2">
                                 <div className="bg-white p-4 rounded-2xl shadow-md border border-border/50">
-                                  <img src={upiQrCode} alt="UPI QR Code" className="w-48 h-48 object-contain" />
+                                  <img src={upiQrCode} alt="UPI QR Code" className="w-40 h-40 object-contain" />
                                 </div>
                               </div>
 
-                              <div className="bg-secondary/30 p-4 rounded-xl flex items-center justify-between border border-secondary">
-                                <span className="font-mono text-foreground font-medium text-lg">himanshisahni001@okicici</span>
+                              <div className="bg-secondary/30 p-3 rounded-xl flex items-center justify-between border border-secondary">
+                                <span className="font-mono text-foreground font-medium text-base">himanshisahni001@okicici</span>
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  className="hover:bg-white"
+                                  className="hover:bg-white h-8 w-8"
                                   onClick={copyUpiId}
                                 >
-                                  <Copy size={18} />
+                                  <Copy size={16} />
                                 </Button>
                               </div>
 
-                              <div className="bg-yellow-50/50 p-4 rounded-xl border border-yellow-100 text-sm text-yellow-800 flex gap-3">
-                                <Sparkles size={18} className="shrink-0 text-yellow-600 mt-0.5" />
-                                <p>
-                                  After payment, send a screenshot to <strong>manzartherapy@gmail.com</strong> or WhatsApp.
-                                </p>
+                              {/* UPI Proof Submission Form */}
+                              <div className="space-y-4 pt-2 border-t">
+                                <h4 className="font-semibold text-sm text-foreground/80">Submit Payment Proof</h4>
+                                
+                                <div>
+                                  <label className="text-xs font-medium text-foreground/70 mb-1 block">Transaction Reference / UTR Number (Optional)</label>
+                                  <Input
+                                    placeholder="Enter 12-digit UTR number"
+                                    value={transactionRef}
+                                    onChange={(e) => setTransactionRef(e.target.value)}
+                                    className="h-10 rounded-lg bg-white/50 border-gray-200 focus:bg-white"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="text-xs font-medium text-foreground/70 mb-1 block">Upload Screenshot (Max 2MB)</label>
+                                  <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                    className="h-10 rounded-lg bg-white/50 border-gray-200 focus:bg-white py-1.5 cursor-pointer file:mr-4 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                                  />
+                                  {screenshotError && <p className="text-red-500 text-xs mt-1">{screenshotError}</p>}
+                                  {screenshotBase64 && (
+                                    <div className="mt-2.5 p-2.5 bg-emerald-50/80 rounded-xl border border-emerald-200 flex items-center gap-3 animate-in fade-in duration-300">
+                                      <img src={screenshotBase64} alt="Screenshot preview" className="w-12 h-12 object-cover rounded-lg border border-emerald-300 shadow-xs shrink-0" />
+                                      <div className="min-w-0 flex-1">
+                                        <p className="text-emerald-900 font-semibold text-xs flex items-center gap-1">
+                                          ✓ Screenshot attached
+                                        </p>
+                                        <p className="text-emerald-700 text-[11px] truncate">Ready to submit with payment verification</p>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                                <Button
+                                  className="w-full h-12 text-base rounded-xl shadow-md mt-2"
+                                  onClick={handleUpiSubmit}
+                                  disabled={upiSubmitting}
+                                >
+                                  {upiSubmitting ? (
+                                    <>
+                                      <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                                      Submitting proof...
+                                    </>
+                                  ) : (
+                                    "Submit UPI Payment Verification"
+                                  )}
+                                </Button>
                               </div>
                             </TabsContent>
                           </Tabs>

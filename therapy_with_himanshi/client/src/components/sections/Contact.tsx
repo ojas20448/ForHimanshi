@@ -15,7 +15,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Mail, Instagram, MapPin } from "lucide-react";
+import { Mail, Instagram, MapPin, Loader2 } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
 const formSchema = z.object({
@@ -72,74 +72,74 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="py-24 bg-secondary/30 relative overflow-hidden">
+    <section id="contact" className="py-16 md:py-28 bg-secondary/30 relative overflow-hidden">
       {/* Background Blobs */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-[hsl(var(--accent-pink))]/40 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute -top-40 -left-40 w-80 sm:w-96 h-80 sm:h-96 bg-[hsl(var(--accent-pink))]/40 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[400px] sm:w-[500px] h-[400px] sm:h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-6 relative z-10 max-w-6xl">
-        <div className="grid md:grid-cols-2 gap-12 lg:gap-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20">
           <motion.div
-            className="space-y-8"
+            className="space-y-6 sm:space-y-8"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
             <div>
-              <span className="text-primary font-medium tracking-wide uppercase text-sm mb-4 block">Get in Touch</span>
-              <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-6">
+              <span className="text-primary font-semibold tracking-wider uppercase text-xs sm:text-sm mb-3 block">Get in Touch</span>
+              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 sm:mb-6">
                 Let's start a conversation.
               </h2>
-              <p className="text-muted-foreground text-lg leading-relaxed">
+              <p className="text-muted-foreground text-base sm:text-lg leading-relaxed text-balance">
                 Reaching out allows us to connect and see how I can support you. Whether you have questions about the process or are ready to book, I'm here.
               </p>
             </div>
 
-            <div className="space-y-6">
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/60 hover:bg-white transition-colors duration-300 shadow-sm border border-transparent hover:border-border/50">
-                <div className="w-12 h-12 rounded-full bg-secondary text-primary flex items-center justify-center shrink-0">
+            <div className="space-y-4 sm:space-y-5">
+              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10">
+                <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
                   <Mail size={20} />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Email</p>
-                  <a href="mailto:manzartherapy@gmail.com" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Email</p>
+                  <a href="mailto:manzartherapy@gmail.com" className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate block">
                     manzartherapy@gmail.com
                   </a>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/60 hover:bg-white transition-colors duration-300 shadow-sm border border-transparent hover:border-border/50">
-                <div className="w-12 h-12 rounded-full bg-secondary text-primary flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10">
+                <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
                   <Instagram size={20} />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Instagram</p>
-                  <a href="https://instagram.com/manzartherapy" target="_blank" rel="noreferrer" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Instagram</p>
+                  <a href="https://instagram.com/manzartherapy" target="_blank" rel="noreferrer" className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate block">
                     @manzartherapy
                   </a>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/60 hover:bg-white transition-colors duration-300 shadow-sm border border-transparent hover:border-border/50">
-                <div className="w-12 h-12 rounded-full bg-secondary text-primary flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10">
+                <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
                   <MapPin size={20} />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Location</p>
-                  <p className="text-lg font-medium text-foreground">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Location</p>
+                  <p className="text-base sm:text-lg font-medium text-foreground">
                     Online & In-person (Delhi/Noida)
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/60 hover:bg-white transition-colors duration-300 shadow-sm border border-transparent hover:border-border/50">
-                <div className="w-12 h-12 rounded-full bg-secondary text-primary flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10">
+                <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
                   <WhatsAppIcon size={20} />
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">WhatsApp</p>
-                  <a href="https://wa.me/919599529780" target="_blank" rel="noreferrer" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">WhatsApp</p>
+                  <a href="https://wa.me/919599529780" target="_blank" rel="noreferrer" className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate block">
                     +91 95995 29780
                   </a>
                 </div>
@@ -152,24 +152,24 @@ export function Contact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white/80 backdrop-blur-md p-8 md:p-10 rounded-[2rem] shadow-xl border border-white/50"
+            className="bg-white/85 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl sm:rounded-[2rem] shadow-xl border border-white/60"
           >
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
+                className="space-y-5"
               >
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground/80">Name</FormLabel>
+                      <FormLabel className="text-foreground/80 font-medium">Name</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Your name"
                           {...field}
-                          className="h-12 rounded-xl bg-white/50 border-gray-200 focus:border-primary/50 focus:bg-white transition-all px-4"
+                          className="h-12 rounded-xl bg-white/60 border-gray-200 focus:border-primary/50 focus:bg-white transition-all px-4 text-base"
                         />
                       </FormControl>
                       <FormMessage />
@@ -181,13 +181,13 @@ export function Contact() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground/80">Email</FormLabel>
+                      <FormLabel className="text-foreground/80 font-medium">Email</FormLabel>
                       <FormControl>
                         <Input
                           type="email"
                           placeholder="your@email.com"
                           {...field}
-                          className="h-12 rounded-xl bg-white/50 border-gray-200 focus:border-primary/50 focus:bg-white transition-all px-4"
+                          className="h-12 rounded-xl bg-white/60 border-gray-200 focus:border-primary/50 focus:bg-white transition-all px-4 text-base"
                         />
                       </FormControl>
                       <FormMessage />
@@ -199,13 +199,13 @@ export function Contact() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground/80">Phone</FormLabel>
+                      <FormLabel className="text-foreground/80 font-medium">Phone</FormLabel>
                       <FormControl>
                         <Input
                           type="tel"
                           placeholder="+91 98765 43210"
                           {...field}
-                          className="h-12 rounded-xl bg-white/50 border-gray-200 focus:border-primary/50 focus:bg-white transition-all px-4"
+                          className="h-12 rounded-xl bg-white/60 border-gray-200 focus:border-primary/50 focus:bg-white transition-all px-4 text-base"
                         />
                       </FormControl>
                       <FormMessage />
@@ -217,12 +217,12 @@ export function Contact() {
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground/80">Message</FormLabel>
+                      <FormLabel className="text-foreground/80 font-medium">Message</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="How can I help you?"
                           {...field}
-                          className="min-h-[140px] rounded-xl bg-white/50 border-gray-200 focus:border-primary/50 focus:bg-white transition-all p-4 resize-none"
+                          className="min-h-[130px] rounded-xl bg-white/60 border-gray-200 focus:border-primary/50 focus:bg-white transition-all p-4 resize-none text-base"
                         />
                       </FormControl>
                       <FormMessage />
@@ -231,10 +231,17 @@ export function Contact() {
                 />
                 <Button
                   type="submit"
-                  className="w-full rounded-xl h-12 text-base font-medium shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                  className="w-full rounded-xl h-12 text-base font-medium shadow-lg hover:shadow-xl transition-all min-h-[44px]"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Sending..." : "Send Message"}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="animate-spin mr-2 h-5 w-5" />
+                      Sending...
+                    </>
+                  ) : (
+                    "Send Message"
+                  )}
                 </Button>
               </form>
             </Form>

@@ -10,11 +10,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const services = [
-  { id: "online-therapy", title: "1:1 Online Therapy", description: "Personalized therapy sessions via secure video call", duration: 60, price: 1000 },
-  { id: "offline-therapy", title: "1:1 Offline Therapy", description: "In-person therapy sessions in Delhi/Noida", duration: 60, price: 1500 },
-  { id: "nri-therapy", title: "1:1 Online Therapy (NRI)", description: "Tailored sessions for Non-Resident Indians", duration: 60, price: 1500 },
-];
+import { services } from "../shared/services";
 
 function getCashfreeClient(): Cashfree | null {
   const clientId = process.env.CASHFREE_CLIENT_ID?.trim();
@@ -25,7 +21,8 @@ function getCashfreeClient(): Cashfree | null {
     return null;
   }
   
-  return new Cashfree(CFEnvironment.PRODUCTION, clientId, clientSecret);
+  const environment = process.env.CASHFREE_ENV === "SANDBOX" ? CFEnvironment.SANDBOX : CFEnvironment.PRODUCTION;
+  return new Cashfree(environment, clientId, clientSecret);
 }
 
 function resolveHttpsBaseUrl(req: Request): string | null {
@@ -57,7 +54,11 @@ app.get("/api/health", (req, res) => {
     status: "ok",
     cashfree: {
       configured: !!clientId && !!process.env.CASHFREE_CLIENT_SECRET,
-      clientIdPrefix: clientId?.substring(0, 12) || "not set"
+      clientIdPrefix: clientId?.substring(0, 12) || "not set",
+      environment: process.env.CASHFREE_ENV || "PRODUCTION"
+    },
+    calcom: {
+      link: process.env.CALCOM_BOOKING_LINK || "himanshi-sahni/therapy-sessions"
     }
   });
 });
@@ -122,6 +123,16 @@ app.post("/api/payments/create-order", async (req: Request, res: Response) => {
   }
 });
 
+app.post("/api/payments/submit-upi", async (req: Request, res: Response) => {
+  try {
+    const { serviceId, customerName, customerEmail, customerPhone, transactionRef, screenshot } = req.body;
+    console.log("UPI submission received:", { serviceId, customerName, customerEmail, customerPhone, transactionRef });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to submit UPI verification" });
+  }
+});
+
 app.post("/api/payments/verify", async (req: Request, res: Response) => {
   try {
     const { orderId } = req.body;
@@ -137,7 +148,7 @@ app.post("/api/payments/verify", async (req: Request, res: Response) => {
       return res.status(500).json({ error: "Payment gateway not configured" });
     }
 
-    const response = await cashfree.PGOrderFetchPayments("2023-08-01", orderId);
+    const response = await cashfree.PGOrderFetchPayments("2025-01-01", orderId);
     const payments = response.data;
     
     console.log("Payment fetch response:", JSON.stringify(payments, null, 2));

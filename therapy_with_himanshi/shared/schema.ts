@@ -29,6 +29,8 @@ export const payments = pgTable("payments", {
   email: text("email"),
   phone: text("phone"),
   serviceName: text("service_name").notNull(),
+  upiScreenshot: text("upi_screenshot"),
+  transactionRef: text("transaction_ref"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
