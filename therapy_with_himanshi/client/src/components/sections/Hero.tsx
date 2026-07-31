@@ -117,9 +117,9 @@ export function Hero() {
                 <HeartHandshake size={16} className="text-primary" />
                 <span>Queer Affirmative</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm px-3.5 py-2 rounded-full border border-primary/10 shadow-xs">
-                <Clock size={16} className="text-primary" />
-                <span>60-Min Sessions</span>
+              <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm px-3.5 py-2 rounded-full border border-primary/10 shadow-xs font-semibold text-primary">
+                <IndianRupee size={15} />
+                <span>Sessions from ₹1,500</span>
               </div>
             </motion.div>
           </motion.div>
