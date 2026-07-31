@@ -156,7 +156,7 @@ export function Hero() {
                 <div className="bg-secondary/30 p-3.5 rounded-xl border border-secondary/50">
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Session Fee</p>
                   <p className="text-sm font-bold text-primary flex items-center">
-                    <IndianRupee size={14} /> 2,000 / Session
+                    <IndianRupee size={14} /> 1,500 / Session
                   </p>
                 </div>
               </div>
