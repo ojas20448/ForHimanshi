@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/Manzar_cropped.svg";
+import logo from "@/assets/Manzar_logo_transparent.png";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
