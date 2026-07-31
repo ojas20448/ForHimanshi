@@ -15,7 +15,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Mail, Instagram, MapPin, Loader2 } from "lucide-react";
+import { Mail, Instagram, MapPin, Loader2, Copy, Check } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
 const formSchema = z.object({
@@ -28,6 +28,18 @@ const formSchema = z.object({
 export function Contact() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [copiedLabel, setCopiedLabel] = useState<string | null>(null);
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedLabel(label);
+    toast({
+      title: "Copied!",
+      description: `${label} (${text}) copied to clipboard.`,
+    });
+    setTimeout(() => setCopiedLabel(null), 2500);
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -97,16 +109,26 @@ export function Contact() {
             </div>
 
             <div className="space-y-4 sm:space-y-5">
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10">
-                <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <Mail size={20} />
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10 group">
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <Mail size={20} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Email</p>
+                    <a href="mailto:manzartherapy@gmail.com" className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate block">
+                      manzartherapy@gmail.com
+                    </a>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Email</p>
-                  <a href="mailto:manzartherapy@gmail.com" className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate block">
-                    manzartherapy@gmail.com
-                  </a>
-                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-xl shrink-0 opacity-80 group-hover:opacity-100"
+                  onClick={() => copyToClipboard("manzartherapy@gmail.com", "Email")}
+                >
+                  {copiedLabel === "Email" ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
+                </Button>
               </div>
 
               <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10">
@@ -133,16 +155,26 @@ export function Contact() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10">
-                <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <WhatsAppIcon size={20} />
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10 group">
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <WhatsAppIcon size={20} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">WhatsApp</p>
+                    <a href="https://wa.me/919599529780" target="_blank" rel="noreferrer" className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate block">
+                      +91 95995 29780
+                    </a>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">WhatsApp</p>
-                  <a href="https://wa.me/919599529780" target="_blank" rel="noreferrer" className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate block">
-                    +91 95995 29780
-                  </a>
-                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="rounded-xl shrink-0 opacity-80 group-hover:opacity-100"
+                  onClick={() => copyToClipboard("+919599529780", "WhatsApp")}
+                >
+                  {copiedLabel === "WhatsApp" ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
+                </Button>
               </div>
             </div>
           </motion.div>
