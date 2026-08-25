@@ -13,6 +13,7 @@ import Home from "@/pages/Home";
 const Book = lazy(() => import("@/pages/Book"));
 const Payment = lazy(() => import("@/pages/Payment"));
 const NotFound = lazy(() => import("@/pages/not-found"));
+const Atmospheric = lazy(() => import("@/pages/atmospheric"));
 
 function Router() {
   return (
@@ -21,6 +22,7 @@ function Router() {
         <Route path="/" component={Home} />
         <Route path="/book" component={Book} />
         <Route path="/payment" component={Payment} />
+        <Route path="/atmospheric" component={Atmospheric} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

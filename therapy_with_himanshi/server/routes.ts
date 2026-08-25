@@ -92,8 +92,8 @@ export async function registerRoutes(
         configured: !!process.env.CASHFREE_CLIENT_ID && !!process.env.CASHFREE_CLIENT_SECRET,
         environment: process.env.CASHFREE_ENV || "PRODUCTION",
       },
-      calcom: {
-        link: process.env.CALCOM_BOOKING_LINK || "himanshi-sahni/therapy-sessions",
+      calendly: {
+        link: process.env.CALENDLY_BOOKING_LINK || "https://calendly.com/manzartherapy/30min",
       },
     });
   });

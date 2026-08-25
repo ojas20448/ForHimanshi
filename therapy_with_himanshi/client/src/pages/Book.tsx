@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,25 +10,17 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { motion } from "framer-motion";
 import { initializeCashfree } from "@/lib/cashfree";
-import { services } from "@shared/services";
+import { services, type ServiceType } from "@shared/services";
 import upiQrCode from "@assets/upi_qr_code.png";
-
-import Cal, { getCalApi } from "@calcom/embed-react";
-
-function getCurrentCalendlyMonth(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  return `${year}-${month}`;
-}
 
 export default function Book() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [selectedService, setSelectedService] = useState(services[0]);
+  const [selectedService, setSelectedService] = useState<ServiceType>(services[0]);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
-  const [calcomLink, setCalcomLink] = useState("himanshi-sahni/therapy-sessions");
+  const [calendlyLink, setCalendlyLink] = useState("https://calendly.com/manzartherapy/30min");
+  const calendlyContainerRef = useRef<HTMLDivElement>(null);
 
   // Customer info
   const [customerName, setCustomerName] = useState("");
@@ -58,34 +50,74 @@ export default function Book() {
       verifyPayment(orderId);
     }
 
-    // Initialize Cal.com UI
-    (async function () {
-      try {
-        const cal = await getCalApi({});
-        cal("ui", {
-          theme: "light",
-          styles: { branding: { brandColor: "#2F5730" } },
-          hideEventTypeDetails: false,
-        });
-      } catch (err) {
-        console.warn("Failed to load Cal.com API", err);
-      }
-    })();
-
     // Fetch dynamic config from health endpoint
     fetch("/api/health")
       .then((res) => res.json())
       .then((data) => {
-        if (data.calcom?.link) {
-          let link = data.calcom.link;
-          if (link.startsWith("https://cal.com/")) {
-            link = link.substring("https://cal.com/".length);
-          }
-          setCalcomLink(link);
+        if (data.calendly?.link) {
+          setCalendlyLink(data.calendly.link);
         }
       })
-      .catch((err) => console.warn("Failed to fetch Cal.com link", err));
+      .catch((err) => console.warn("Failed to fetch Calendly link", err));
   }, []);
+
+  // Initialize Calendly inline widget
+  useEffect(() => {
+    // Inject stylesheet if needed
+    if (!document.querySelector('link[href="https://assets.calendly.com/assets/external/widget.css"]')) {
+      const link = document.createElement("link");
+      link.href = "https://assets.calendly.com/assets/external/widget.css";
+      link.rel = "stylesheet";
+      document.head.appendChild(link);
+    }
+
+    const initWidget = () => {
+      if (calendlyContainerRef.current && (window as any).Calendly) {
+        calendlyContainerRef.current.innerHTML = "";
+
+        let url = calendlyLink.trim();
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+          url = `https://calendly.com/${url.replace(/^\/+/, "")}`;
+        }
+
+        try {
+          const urlObj = new URL(url);
+          urlObj.searchParams.set("primary_color", "2f5730");
+          urlObj.searchParams.set("hide_gdpr_banner", "1");
+
+          (window as any).Calendly.initInlineWidget({
+            url: urlObj.toString(),
+            parentElement: calendlyContainerRef.current,
+            prefill: {
+              name: customerName,
+              email: customerEmail,
+            },
+          });
+        } catch {
+          (window as any).Calendly.initInlineWidget({
+            url: url,
+            parentElement: calendlyContainerRef.current,
+          });
+        }
+      }
+    };
+
+    if ((window as any).Calendly) {
+      initWidget();
+    } else {
+      let script = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]') as HTMLScriptElement;
+      if (!script) {
+        script = document.createElement("script");
+        script.src = "https://assets.calendly.com/assets/external/widget.js";
+        script.async = true;
+        document.body.appendChild(script);
+      }
+      script.addEventListener("load", initWidget);
+      return () => {
+        script.removeEventListener("load", initWidget);
+      };
+    }
+  }, [calendlyLink]);
 
   const verifyPayment = async (orderId: string) => {
     setPaymentProcessing(true);
@@ -401,16 +433,11 @@ export default function Book() {
                       <CardDescription>Choose a convenient time for your therapy session</CardDescription>
                     </CardHeader>
                     <CardContent className="p-0">
-                      <div className="w-full bg-white relative rounded-b-xl p-2 min-h-[550px] sm:min-h-[650px] md:min-h-[700px]">
-                        <Cal
-                          calLink={calcomLink}
-                          style={{ width: "100%", height: "100%", minHeight: "550px" }}
-                          config={{
-                            name: customerName,
-                            email: customerEmail,
-                            theme: "light",
-                            notes: customerPhone ? `Phone: ${customerPhone}` : "",
-                          }}
+                      <div className="w-full bg-white relative rounded-b-xl overflow-hidden min-h-[650px] md:min-h-[700px] flex items-center justify-center">
+                        <div
+                          ref={calendlyContainerRef}
+                          className="w-full h-full min-h-[650px] md:min-h-[700px]"
+                          style={{ minWidth: "320px", height: "700px" }}
                         />
                       </div>
 
@@ -418,7 +445,7 @@ export default function Book() {
                       <div className="p-4 text-center border-t border-white/20 bg-white/30">
                         <p className="text-sm text-gray-600 mb-2">Can't see the calendar?</p>
                         <a
-                          href={`https://cal.com/${calcomLink}`}
+                          href={calendlyLink.startsWith("http") ? calendlyLink : `https://calendly.com/${calendlyLink}`}
                           target="_blank"
                           rel="noreferrer"
                           className="inline-flex items-center gap-2 text-primary font-medium hover:underline bg-white/50 px-4 py-2 rounded-full shadow-sm border border-white/50"

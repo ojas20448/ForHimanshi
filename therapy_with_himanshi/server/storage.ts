@@ -81,6 +81,8 @@ export class MemStorage implements IStorage {
       email: insertPayment.email ?? null,
       phone: insertPayment.phone ?? null,
       serviceName: insertPayment.serviceName,
+      transactionRef: (insertPayment as any).transactionRef ?? null,
+      upiScreenshot: (insertPayment as any).upiScreenshot ?? null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

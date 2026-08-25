@@ -1,0 +1,36 @@
+{
+  "slides": [
+    {
+      "type": "title",
+      "mainText": "Your anxiety doesn’t look like panic.",
+      "subText": "It looks like perfectionism, a flawless calendar, and a smile that never drops."
+    },
+    {
+      "type": "standard",
+      "mainText": "The High-Functioning Trap",
+      "subText": "When you are the 'strong friend' who handles everything, the world forgets to check on you. But who holds you when you are holding everything else together?"
+    },
+    {
+      "type": "list",
+      "title": "It usually looks like:",
+      "items": [
+        "Treating rest as a reward you have to 'earn'.",
+        "Apologizing when you haven't done anything wrong.",
+        "A harsh inner critic that never sleeps.",
+        "Fear of disappointing others overriding your own needs."
+      ]
+    },
+    {
+      "type": "quote",
+      "mainText": "Survival mode is not a lifestyle.",
+      "subText": "Just because you can carry it, doesn't mean you should have to."
+    },
+    {
+      "type": "cta",
+      "mainText": "You don't have to carry the weight alone.",
+      "subText": "Therapy is your space to finally drop the armor.",
+      "ctaText": "Book a session via DM or at",
+      "ctaWebsite": "manzartherapy.com"
+    }
+  ]
+}
