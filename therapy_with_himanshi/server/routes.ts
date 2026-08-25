@@ -244,6 +244,9 @@ export async function registerRoutes(
       res.json({
         success: true,
         bookingToken,
+        email: payment?.email || null,
+        phone: payment?.phone || null,
+        serviceName: payment?.serviceName || null,
         message: "Payment verified successfully",
       });
     } catch (error: any) {
