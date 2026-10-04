@@ -17,8 +17,8 @@ export default function Book() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [selectedService, setSelectedService] = useState<ServiceType>(services[0]);
+  const [bookingStep, setBookingStep] = useState<"scheduling" | "payment" | "confirmed">("scheduling");
   const [paymentProcessing, setPaymentProcessing] = useState(false);
-  const [bookingSubmitted, setBookingSubmitted] = useState(false);
   const [calendlyLink, setCalendlyLink] = useState("https://calendly.com/manzartherapy/30min");
   const calendlyContainerRef = useRef<HTMLDivElement>(null);
 
@@ -61,11 +61,26 @@ export default function Book() {
       .catch((err) => console.warn("Failed to fetch Calendly link", err));
   }, []);
 
-  // Initialize Calendly inline widget when payment is completed / calendar unlocked
+  // Listen to Calendly events
   useEffect(() => {
-    if (!bookingSubmitted) return;
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data.event && e.data.event === "calendly.event_scheduled") {
+        setBookingStep("payment");
+        toast({
+          title: "Slot Reserved!",
+          description: "Please complete your payment to finalize the booking.",
+        });
+        window.scrollTo(0, 0);
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [toast]);
 
-    // Inject stylesheet if needed
+  // Initialize Calendly inline widget when in scheduling step
+  useEffect(() => {
+    if (bookingStep !== "scheduling") return;
+
     if (!document.querySelector('link[href="https://assets.calendly.com/assets/external/widget.css"]')) {
       const link = document.createElement("link");
       link.href = "https://assets.calendly.com/assets/external/widget.css";
@@ -76,56 +91,35 @@ export default function Book() {
     const initWidget = () => {
       if (calendlyContainerRef.current && (window as any).Calendly) {
         calendlyContainerRef.current.innerHTML = "";
-
         let url = calendlyLink.trim();
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
           url = `https://calendly.com/${url.replace(/^\/+/, "")}`;
         }
-
+        
         try {
           const urlObj = new URL(url);
           urlObj.searchParams.set("primary_color", "2f5730");
           urlObj.searchParams.set("hide_gdpr_banner", "1");
           urlObj.searchParams.set("utm_source", "manzar_website");
-          urlObj.searchParams.set("utm_medium", "website_embed_gated");
-          urlObj.searchParams.set("utm_campaign", "paid_booking");
-
-          if (customerName.trim()) {
-            urlObj.searchParams.set("name", customerName.trim());
-          }
-          if (customerEmail.trim()) {
-            urlObj.searchParams.set("email", customerEmail.trim());
-          }
-          if (customerPhone.trim()) {
-            urlObj.searchParams.set("a1", customerPhone.trim());
-          }
-
+          urlObj.searchParams.set("utm_medium", "website_embed_scheduling_first");
+          
           (window as any).Calendly.initInlineWidget({
             url: urlObj.toString(),
             parentElement: calendlyContainerRef.current,
             prefill: {
               name: customerName.trim(),
               email: customerEmail.trim(),
-            },
-            utm: {
-              utmSource: "manzar_website",
-              utmMedium: "website_embed_gated",
-              utmCampaign: "paid_booking",
-            },
+            }
           });
         } catch {
+          // fallback
           (window as any).Calendly.initInlineWidget({
             url: url,
             parentElement: calendlyContainerRef.current,
             prefill: {
               name: customerName.trim(),
               email: customerEmail.trim(),
-            },
-            utm: {
-              utmSource: "manzar_website",
-              utmMedium: "website_embed_gated",
-              utmCampaign: "paid_booking",
-            },
+            }
           });
         }
       }
@@ -146,7 +140,7 @@ export default function Book() {
         script.removeEventListener("load", initWidget);
       };
     }
-  }, [bookingSubmitted, calendlyLink, customerName, customerEmail, customerPhone]);
+  }, [bookingStep, calendlyLink, customerName, customerEmail]);
 
   const verifyPayment = async (orderId: string) => {
     setPaymentProcessing(true);
@@ -160,7 +154,7 @@ export default function Book() {
       const data = await response.json();
 
       if (data.success) {
-        setBookingSubmitted(true);
+        setBookingStep("confirmed");
         if (data.email) setCustomerEmail(data.email);
         if (data.phone) setCustomerPhone(data.phone);
         if (data.serviceName) {
@@ -168,8 +162,8 @@ export default function Book() {
           if (found) setSelectedService(found);
         }
         toast({
-          title: "Payment Confirmed!",
-          description: "Payment verified. Please pick your date and time slot below.",
+          title: "Booking Confirmed!",
+          description: "Payment verified. Your session is fully secured.",
         });
       } else {
         throw new Error(data.error || "Payment verification failed");
@@ -180,6 +174,7 @@ export default function Book() {
         description: error.message || "Could not verify payment status.",
         variant: "destructive",
       });
+      setBookingStep("payment"); // Keep them on payment step if verification fails
     } finally {
       setPaymentProcessing(false);
     }
@@ -259,10 +254,10 @@ export default function Book() {
         throw new Error(errorData.error || "Failed to submit payment verification");
       }
 
-      setBookingSubmitted(true);
+      setBookingStep("confirmed");
       toast({
-        title: "Verification Submitted!",
-        description: "Your payment verification is received and will be checked shortly.",
+        title: "Booking Submitted!",
+        description: "Your payment verification is received. Your session is secured.",
       });
     } catch (error: any) {
       toast({
@@ -319,10 +314,10 @@ export default function Book() {
       }
 
       if (result.paymentDetails) {
-        setBookingSubmitted(true);
+        setBookingStep("confirmed");
         toast({
           title: "Payment Successful!",
-          description: "Your payment is confirmed.",
+          description: "Your session is fully secured.",
         });
       }
     } catch (error: any) {
@@ -343,8 +338,6 @@ export default function Book() {
       description: "UPI ID copied to clipboard",
     });
   };
-
-  // Cal.com setup
 
   return (
     <div className="min-h-screen bg-background flex flex-col font-sans">
@@ -373,52 +366,53 @@ export default function Book() {
               className="text-center mb-10"
             >
               <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-3">
-                {bookingSubmitted ? "Pick Your Time Slot" : "Book Your Session"}
+                {bookingStep === "confirmed" ? "Booking Confirmed" : "Book Your Session"}
               </h1>
               <p className="text-muted-foreground text-base md:text-lg max-w-xl mx-auto">
-                {bookingSubmitted
-                  ? "Your session is confirmed. Choose a convenient date and time below."
-                  : "Step 1 of 2: Fill in your details & complete payment to unlock the scheduling calendar."}
+                {bookingStep === "confirmed"
+                  ? "Your session is fully secured."
+                  : bookingStep === "payment"
+                  ? "Step 2 of 2: Fill in your details & complete payment to secure your slot."
+                  : "Step 1 of 2: Choose a convenient date and time below."}
               </p>
 
               {/* Step indicator pills */}
               <div className="flex items-center justify-center gap-3 mt-6">
                 <div
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all ${
-                    bookingSubmitted
-                      ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                      : "bg-primary text-white shadow-md"
+                    bookingStep === "scheduling"
+                      ? "bg-primary text-white shadow-md animate-pulse"
+                      : "bg-emerald-100 text-emerald-800 border border-emerald-300"
                   }`}
                 >
-                  {bookingSubmitted ? <CheckCircle2 size={14} /> : <span>1</span>}
-                  <span>1. Details & Payment</span>
+                  {bookingStep !== "scheduling" ? <CheckCircle2 size={14} /> : <span>1</span>}
+                  <span>1. Pick Time Slot</span>
                 </div>
                 <div className="w-6 h-0.5 bg-gray-300" />
                 <div
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all ${
-                    bookingSubmitted
+                    bookingStep === "payment"
                       ? "bg-primary text-white shadow-md animate-pulse"
-                      : "bg-gray-100 text-gray-400 border border-gray-200"
+                      : bookingStep === "confirmed"
+                      ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                      : "bg-gray-100 text-gray-500"
                   }`}
                 >
-                  {bookingSubmitted ? <CalendarIcon size={14} /> : <Lock size={13} />}
-                  <span>2. Schedule Time</span>
+                  {bookingStep === "confirmed" ? <CheckCircle2 size={14} /> : <span>2</span>}
+                  <span>2. Details & Payment</span>
                 </div>
               </div>
             </motion.div>
 
             <AnimatePresence mode="wait">
-              {/* STEP 2: CALENDAR UNLOCKED (AFTER PAYMENT) */}
-              {bookingSubmitted ? (
+              {bookingStep === "confirmed" ? (
+                /* STEP 3: CONFIRMED */
                 <motion.div
-                  key="step2-calendar"
-                  initial={{ opacity: 0, scale: 0.96 }}
+                  key="step3-confirmed"
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="space-y-8"
+                  className="max-w-3xl mx-auto"
                 >
-                  {/* Success Confirmation Card */}
                   <Card className="glass-panel border-emerald-300/80 shadow-xl bg-emerald-50/50 overflow-hidden">
                     <CardContent className="p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
                       <div className="flex items-center gap-4 text-left">
@@ -427,11 +421,11 @@ export default function Book() {
                         </div>
                         <div>
                           <h3 className="font-heading text-xl sm:text-2xl font-bold text-emerald-950">
-                            Payment Confirmed!
+                            Booking Confirmed!
                           </h3>
                           <p className="text-sm text-emerald-800 mt-1">
                             {customerName ? <strong>{customerName}</strong> : "You are registered"} ({customerEmail || "email confirmed"}).
-                            {" "}Please select your date & time slot below.
+                            {" "}Your slot is secured and calendar invites will be sent shortly.
                           </p>
                         </div>
                       </div>
@@ -443,49 +437,14 @@ export default function Book() {
                       </div>
                     </CardContent>
                   </Card>
-
-                  {/* Calendly Inline Embed */}
-                  <Card className="glass-panel border-white/80 shadow-2xl overflow-hidden">
-                    <CardHeader className="bg-white/60 border-b border-white/40">
-                      <CardTitle className="font-heading text-2xl flex items-center gap-2">
-                        <CalendarIcon size={24} className="text-primary" />
-                        Select Date & Time Slot
-                      </CardTitle>
-                      <CardDescription>
-                        Click a date and choose an available time slot that works best for you.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-0 bg-white">
-                      <div className="w-full relative min-h-[650px] md:min-h-[700px] flex items-center justify-center">
-                        <div
-                          ref={calendlyContainerRef}
-                          className="w-full h-full min-h-[650px] md:min-h-[700px]"
-                          style={{ minWidth: "320px", height: "700px" }}
-                        />
-                      </div>
-
-                      {/* Fallback button if iframe fails */}
-                      <div className="p-4 text-center border-t border-white/20 bg-gray-50/60">
-                        <p className="text-sm text-gray-600 mb-2">Can't see the calendar?</p>
-                        <a
-                          href={`${calendlyLink.startsWith("http") ? calendlyLink : `https://calendly.com/${calendlyLink}`}${calendlyLink.includes("?") ? "&" : "?"}name=${encodeURIComponent(customerName)}&email=${encodeURIComponent(customerEmail)}&utm_source=manzar_website&utm_medium=website_button_gated`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-2 text-primary font-medium hover:underline bg-white px-5 py-2.5 rounded-full shadow-xs border border-primary/20"
-                        >
-                          Open Booking Page Directly <ExternalLink size={16} />
-                        </a>
-                      </div>
-                    </CardContent>
-                  </Card>
                 </motion.div>
-              ) : (
-                /* STEP 1: PAYMENT & CLIENT DETAILS */
+              ) : bookingStep === "scheduling" ? (
+                /* STEP 1: SCHEDULING */
                 <motion.div
-                  key="step1-payment"
+                  key="step1-scheduling"
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.4 }}
                   className="grid lg:grid-cols-3 gap-8"
                 >
@@ -537,15 +496,15 @@ export default function Book() {
                           <ol className="space-y-2.5 text-sm text-muted-foreground">
                             <li className="flex gap-2">
                               <span className="font-semibold text-primary">1.</span>
-                              <span>Fill your contact info</span>
+                              <span>Select a convenient date & time</span>
                             </li>
                             <li className="flex gap-2">
                               <span className="font-semibold text-primary">2.</span>
-                              <span>Complete payment (Cashfree or UPI)</span>
+                              <span>Fill your contact info & pay</span>
                             </li>
                             <li className="flex gap-2">
                               <span className="font-semibold text-primary">3.</span>
-                              <span className="font-medium text-foreground">Scheduling calendar unlocks instantly</span>
+                              <span className="font-medium text-foreground">Session is fully confirmed</span>
                             </li>
                           </ol>
                         </div>
@@ -553,20 +512,66 @@ export default function Book() {
                     </Card>
                   </div>
 
-                  {/* Right: Client Details Form + Payment Options */}
-                  <div className="lg:col-span-2 space-y-8">
-                    {/* Customer Info Section */}
-                    <Card className="glass-panel border-white/60 shadow-xl">
-                      <CardHeader className="bg-white/40 border-b border-white/20">
+                  {/* Right: Calendly Embed */}
+                  <div className="lg:col-span-2">
+                    <Card className="glass-panel border-white/80 shadow-2xl overflow-hidden">
+                      <CardHeader className="bg-white/60 border-b border-white/40">
                         <CardTitle className="font-heading text-2xl flex items-center gap-2">
-                          <User size={24} className="text-primary" />
-                          1. Your Information
+                          <CalendarIcon size={24} className="text-primary" />
+                          Select Date & Time Slot
                         </CardTitle>
-                        <CardDescription>Enter your contact info for the session and booking confirmation</CardDescription>
+                        <CardDescription>
+                          Click a date and choose an available time slot that works best for you.
+                        </CardDescription>
                       </CardHeader>
-                      <CardContent className="p-6">
-                        <div className="grid sm:grid-cols-2 gap-4">
-                          <div className="sm:col-span-2">
+                      <CardContent className="p-0 bg-white">
+                        <div className="w-full relative min-h-[650px] md:min-h-[700px] flex items-center justify-center">
+                          <div
+                            ref={calendlyContainerRef}
+                            className="w-full h-full min-h-[650px] md:min-h-[700px]"
+                            style={{ minWidth: "320px", height: "700px" }}
+                          />
+                        </div>
+
+                        {/* Fallback button if iframe fails */}
+                        <div className="p-4 text-center border-t border-white/20 bg-gray-50/60">
+                          <p className="text-sm text-gray-600 mb-2">Can't see the calendar?</p>
+                          <a
+                            href={`${calendlyLink.startsWith("http") ? calendlyLink : `https://calendly.com/${calendlyLink}`}${calendlyLink.includes("?") ? "&" : "?"}utm_source=manzar_website&utm_medium=website_button_gated`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 text-primary font-medium hover:underline bg-white px-5 py-2.5 rounded-full shadow-xs border border-primary/20"
+                          >
+                            Open Booking Page Directly <ExternalLink size={16} />
+                          </a>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </motion.div>
+              ) : (
+                /* STEP 2: PAYMENT & DETAILS */
+                <motion.div
+                  key="step2-payment"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.4 }}
+                  className="grid lg:grid-cols-3 gap-8"
+                >
+                  {/* Left: Customer Form */}
+                  <div className="lg:col-span-1 space-y-6">
+                    <Card className="glass-card border-white/60 shadow-xl sticky top-24">
+                      <CardHeader className="bg-white/40 border-b border-white/20 pb-4">
+                        <CardTitle className="font-heading text-xl flex items-center gap-2">
+                          <User size={20} className="text-primary" />
+                          Your Details
+                        </CardTitle>
+                        <CardDescription>Required for payment verification and invoice</CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-6 space-y-4">
+                        <div className="space-y-4">
+                          <div>
                             <label className="text-sm font-medium text-foreground/80 mb-1.5 block">Full Name</label>
                             <div className="relative">
                               <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -610,8 +615,10 @@ export default function Book() {
                         </div>
                       </CardContent>
                     </Card>
+                  </div>
 
-                    {/* Payment Options Section */}
+                  {/* Right: Payment Options */}
+                  <div className="lg:col-span-2">
                     <Card className="glass-panel border-white/60 shadow-xl">
                       <CardHeader className="bg-white/40 border-b border-white/20">
                         <CardTitle className="font-heading text-2xl flex items-center justify-between">
@@ -619,7 +626,7 @@ export default function Book() {
                           <span className="text-lg font-bold text-primary">₹{selectedService.price}</span>
                         </CardTitle>
                         <CardDescription>
-                          Choose your preferred payment method to proceed to the calendar
+                          Choose your preferred payment method to secure your slot
                         </CardDescription>
                       </CardHeader>
 
@@ -638,7 +645,7 @@ export default function Book() {
                               </div>
                               <h3 className="font-heading text-xl font-bold mb-1">Instant Online Checkout</h3>
                               <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-                                Instant automated verification. The scheduling calendar will unlock immediately after payment.
+                                Instant automated verification. Your session will be fully confirmed immediately.
                               </p>
                             </div>
 
@@ -653,7 +660,7 @@ export default function Book() {
                                   Opening Gateway...
                                 </>
                               ) : (
-                                `Pay ₹${selectedService.price} & Unlock Calendar`
+                                `Pay ₹${selectedService.price} & Confirm Booking`
                               )}
                             </Button>
                           </TabsContent>
@@ -713,9 +720,9 @@ export default function Book() {
                                     <img src={screenshotBase64} alt="Screenshot preview" className="w-12 h-12 object-cover rounded-lg border border-emerald-300 shadow-xs shrink-0" />
                                     <div className="min-w-0 flex-1">
                                       <p className="text-emerald-900 font-semibold text-xs flex items-center gap-1">
-                                        ✓ Screenshot attached
+                                        ✔ Screenshot attached
                                       </p>
-                                      <p className="text-emerald-700 text-[11px] truncate">Ready to submit and unlock calendar</p>
+                                      <p className="text-emerald-700 text-[11px] truncate">Ready to submit and confirm booking</p>
                                     </div>
                                   </div>
                                 )}
@@ -732,7 +739,7 @@ export default function Book() {
                                     Submitting proof...
                                   </>
                                 ) : (
-                                  "Submit Proof & Unlock Calendar"
+                                  "Submit Proof & Confirm Booking"
                                 )}
                               </Button>
                             </div>
