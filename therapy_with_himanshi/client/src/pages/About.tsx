@@ -149,7 +149,7 @@ export default function About() {
                 <div className="space-y-4 text-muted-foreground leading-relaxed">
                   <p>
                     I'm Himanshi Sahni (she/her), a counselling psychologist who
-                    works from a deeply relational and person-centred space. I
+                    works from a deeply relational and compassionate space. I
                     hold an MSc in Applied Psychology with a clinical
                     specialisation, and I currently work with adults aged 18-40
                     navigating the many layers of emotional life.

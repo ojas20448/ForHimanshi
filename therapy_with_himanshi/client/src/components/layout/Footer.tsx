@@ -1,100 +1,101 @@
-import { Instagram, Mail, Calendar, Heart, MapPin, Phone } from "lucide-react";
+import { Instagram, Mail, ArrowUpRight } from "lucide-react";
 import { Link } from "wouter";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
 export function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="bg-foreground text-white py-16 mt-auto relative overflow-hidden">
-      {/* Decorative gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-[hsl(var(--accent-pink))]/20 rounded-full blur-[100px] pointer-events-none" />
-
-      <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="grid md:grid-cols-4 gap-12 mb-16">
-          <div className="md:col-span-2 space-y-6">
-            <h3 className="font-heading font-bold text-3xl text-primary-foreground/90">Manzar Therapy</h3>
-            <p className="text-white/70 max-w-sm text-lg leading-relaxed font-light">
-              "Manzar is the inner landscape each of us carries." <br />
-              A space that centres your lived experience and honours the complexity of your journey.
+    <footer className="site-footer">
+      <div className="site-container">
+        <div className="footer-top">
+          <div className="footer-about">
+            <Link href="/" className="footer-brand">
+              MANZAR
+            </Link>
+            <p>
+              The inner landscape each of us carries.
+              <br />A space that honours your stories and the complexity of your
+              journey.
             </p>
-            <div className="flex items-center gap-4 pt-4">
+            <div className="footer-socials">
               <a
                 href="https://instagram.com/manzartherapy"
                 target="_blank"
-                rel="noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300"
-                aria-label="Instagram"
+                rel="noopener noreferrer"
+                aria-label="Manzar Therapy on Instagram"
               >
-                <Instagram size={20} />
+                <Instagram size={18} aria-hidden="true" />
               </a>
               <a
                 href="mailto:manzartherapy@gmail.com"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300"
-                aria-label="Email"
+                aria-label="Email Manzar Therapy"
               >
-                <Mail size={20} />
+                <Mail size={18} aria-hidden="true" />
               </a>
               <a
                 href="https://wa.me/919599529780"
                 target="_blank"
-                rel="noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300"
-                aria-label="WhatsApp"
+                rel="noopener noreferrer"
+                aria-label="Contact Manzar Therapy on WhatsApp"
               >
-                <WhatsAppIcon size={20} />
+                <WhatsAppIcon size={19} />
               </a>
             </div>
           </div>
-
-          <div className="space-y-6">
-            <h4 className="font-heading text-xl font-medium text-white/90">Quick Links</h4>
-            <ul className="space-y-4">
+          <div className="footer-nav">
+            <h3>Find your way</h3>
+            <ul>
               <li>
-                <a href="#about" className="text-white/60 hover:text-primary-foreground transition-colors inline-block">About Me</a>
+                <a href="/#about">About Himanshi</a>
               </li>
               <li>
-                <a href="#services" className="text-white/60 hover:text-primary-foreground transition-colors inline-block">Services</a>
+                <a href="/#services">Therapy & fees</a>
               </li>
               <li>
-                <a href="#faq" className="text-white/60 hover:text-primary-foreground transition-colors inline-block">FAQ</a>
+                <Link href="/workshops">Workshops</Link>
               </li>
               <li>
-                <Link href="/book" className="text-white/60 hover:text-primary-foreground transition-colors inline-block">Book a Session</Link>
+                <a href="/#faq">Common questions</a>
+              </li>
+              <li>
+                <Link href="/book">
+                  Book a session{" "}
+                  <ArrowUpRight size={13} className="ml-2" aria-hidden="true" />
+                </Link>
               </li>
             </ul>
           </div>
-
-          <div className="space-y-6">
-            <h4 className="font-heading text-xl font-medium text-white/90">Contact</h4>
-            <ul className="space-y-4 text-white/60">
-              <li className="flex items-start gap-3">
-                <Mail size={18} className="mt-1 shrink-0" />
-                <span className="text-sm">manzartherapy@gmail.com</span>
+          <div className="footer-contact">
+            <h3>A conversation starts here</h3>
+            <ul>
+              <li>
+                <a href="mailto:manzartherapy@gmail.com">
+                  manzartherapy@gmail.com
+                </a>
               </li>
-              <li className="flex items-start gap-3">
-                <Phone size={18} className="mt-1 shrink-0" />
-                <a href="https://wa.me/919599529780" target="_blank" rel="noreferrer" className="text-sm hover:text-white transition-colors">
+              <li>
+                <a
+                  href="https://wa.me/919599529780"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   +91 95995 29780
                 </a>
               </li>
-              <li className="flex items-start gap-3">
-                <MapPin size={18} className="mt-1 shrink-0" />
-                <span className="text-sm">Online & In-person<br />(Delhi/Noida)</span>
-              </li>
+              <li>Online & in person · East Delhi</li>
             </ul>
           </div>
         </div>
-
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/40">
-          <p>© {currentYear} Manzar Therapy. All rights reserved.</p>
-          <div className="flex items-center gap-2">
-            <span>Designed with</span>
-            <Heart size={14} className="text-[hsl(var(--accent-pink))] fill-[hsl(var(--accent-pink))]" />
-            <span>for Healing</span>
-          </div>
+        <div className="footer-bottom">
+          <span>
+            © {new Date().getFullYear()} Manzar Therapy. All rights reserved.
+          </span>
+          <span>Counselling with care. At your pace.</span>
         </div>
+        <p className="footer-care-note">
+          Manzar Therapy offers scheduled counselling and is not an emergency
+          service. If you are in immediate danger, contact your local emergency
+          services or go to the nearest emergency department.
+        </p>
       </div>
     </footer>
   );

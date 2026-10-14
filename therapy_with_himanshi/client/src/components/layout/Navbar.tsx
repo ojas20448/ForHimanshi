@@ -1,123 +1,180 @@
 import { Link, useLocation } from "wouter";
-import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import logo from "@/assets/Manzar_logo_transparent.png";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
   const [location] = useLocation();
-
-  const navLinks = [
-    { name: "About", href: "#about" },
-    { name: "Services", href: "#services" },
-    { name: "Contact", href: "#contact" },
-  ];
-
-  const handleScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      setScrolled(window.scrollY > 20);
+      const readingLine = Math.min(window.innerHeight * 0.3, 220);
+      const active = location === "/" ? ["about", "services", "contact"].find((id) => {
+        const bounds = document.getElementById(id)?.getBoundingClientRect();
+        return bounds && bounds.top <= readingLine && bounds.bottom > readingLine;
+      }) : "";
+      setActiveSection(active || "");
+    };
+    const schedule = () => { if (!frame) frame = window.requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      window.cancelAnimationFrame(frame);
+    };
+  }, [location]);
+  useEffect(() => {
     setIsOpen(false);
-
-    // If not on homepage, navigate to homepage first
-    if (location !== "/") {
-      window.location.href = "/" + href;
-      return;
-    }
-
-    const element = document.querySelector(href);
-    if (element) {
-      const offset = 72; // Height of navbar
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth"
-      });
-    }
+  }, [location]);
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setIsOpen(false);
+    };
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
+  useEffect(() => {
+    if (!isOpen) return;
+    panelRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: KeyboardEvent) => {
+      const links = Array.from(
+        panelRef.current?.querySelectorAll<HTMLAnchorElement>("a") || [],
+      );
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        toggleRef.current?.focus();
+      }
+      if (event.key === "Tab") {
+        if (event.shiftKey && document.activeElement === links[0]) {
+          event.preventDefault();
+          toggleRef.current?.focus();
+        } else if (!event.shiftKey && document.activeElement === links.at(-1)) {
+          event.preventDefault();
+          toggleRef.current?.focus();
+        } else if (document.activeElement === toggleRef.current) {
+          event.preventDefault();
+          (event.shiftKey ? links.at(-1) : links[0])?.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [isOpen]);
+  const navLinks = [
+    { name: "About", href: "/#about" },
+    { name: "Therapy", href: "/#services" },
+    { name: "Workshops", href: "/workshops" },
+    { name: "Contact", href: "/#contact" },
+  ];
+  const current = (href: string) => {
+    if (href === location) return "page" as const;
+    if (location === "/" && activeSection && href === `/#${activeSection}`)
+      return "location" as const;
+    return undefined;
   };
-
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-primary/10 bg-white/85 backdrop-blur-md shadow-xs transition-all duration-300">
-      <div className="container mx-auto px-4 md:px-6 py-2 flex items-center justify-between">
-        <Link href="/" className="cursor-pointer flex items-center gap-3">
-          <img src={logo} alt="Manzar Therapy" className="h-14 md:h-20 w-auto transition-transform hover:scale-105 object-contain" />
+    <header className={`site-header ${scrolled ? "is-scrolled" : ""}`}>
+      <nav className="site-container nav-inner" aria-label="Main navigation">
+        <Link href="/" className="brand-link" aria-label="Manzar Therapy home">
+          <img
+            src="/images/manzar-logo.png"
+            alt="Manzar Therapy"
+            width="204"
+            height="80"
+          />
         </Link>
-
-        <div className="hidden md:flex items-center gap-8">
+        <div className="desktop-nav">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
-              onClick={(e) => handleScroll(e, link.href)}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary relative group"
+              className={
+                current(link.href)
+                  ? "nav-link is-active"
+                  : "nav-link"
+              }
+              aria-current={current(link.href)}
               data-testid={`nav-${link.name.toLowerCase()}`}
             >
               {link.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[hsl(var(--accent-pink))] transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
-          <Link href="/book">
-            <Button className="rounded-full px-6 shadow-md hover:shadow-lg transition-all hover:scale-105 active:scale-95" data-testid="nav-book-session">
-              Book a Session
-            </Button>
+          <Link
+            href="/book"
+            className="action-button nav-book"
+            data-testid="nav-book-session"
+          >
+            Book a session <ArrowUpRight size={16} aria-hidden="true" />
           </Link>
         </div>
-
-        <button
-          className="md:hidden p-3 rounded-full hover:bg-black/5 text-foreground transition-colors flex items-center justify-center min-w-[44px] min-h-[44px]"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle navigation menu"
-          data-testid="button-mobile-menu"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Animated Mobile Glass Drawer */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 top-[65px] bg-black/20 backdrop-blur-xs md:hidden z-40"
+        <div className="mobile-nav-actions">
+          <Link href="/book" className="mobile-book">
+            Book a session
+          </Link>
+          <button
+            ref={toggleRef}
+            type="button"
+            className="menu-toggle"
+            aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
+            aria-label={
+              isOpen ? "Close navigation menu" : "Open navigation menu"
+            }
+            onClick={() => setIsOpen((v) => !v)}
+            data-testid="button-mobile-menu"
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </nav>
+      {isOpen && (
+        <>
+          <button
+            className="menu-backdrop"
+            aria-label="Close navigation"
+            tabIndex={-1}
+            onClick={() => {
+              setIsOpen(false);
+              toggleRef.current?.focus();
+            }}
+          />
+          <div ref={panelRef} id="mobile-navigation" className="mobile-menu">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                aria-current={current(link.href)}
+                onClick={() => setIsOpen(false)}
+              >
+                {link.name}
+                <ArrowUpRight size={20} aria-hidden="true" />
+              </a>
+            ))}
+            <Link
+              href="/book"
+              className="action-button"
               onClick={() => setIsOpen(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, y: -20, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: "auto" }}
-              exit={{ opacity: 0, y: -20, height: 0 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className="md:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-b border-primary/10 shadow-xl overflow-hidden z-50"
             >
-              <div className="flex flex-col p-6 gap-5 items-center text-center">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    onClick={(e) => handleScroll(e, link.href)}
-                    className="text-lg font-medium text-foreground hover:text-primary w-full py-2 rounded-xl transition-colors active:bg-primary/5 min-h-[44px] flex items-center justify-center"
-                  >
-                    {link.name}
-                  </a>
-                ))}
-                <Link href="/book" onClick={() => setIsOpen(false)} className="w-full pt-2">
-                  <Button className="w-full rounded-full text-base py-6 shadow-md" size="lg">
-                    Book a Session
-                  </Button>
-                </Link>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </nav>
+              Book a session <ArrowUpRight size={18} aria-hidden="true" />
+            </Link>
+            <p>A little space. A new perspective.</p>
+          </div>
+        </>
+      )}
+    </header>
   );
 }

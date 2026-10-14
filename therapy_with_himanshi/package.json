@@ -10,7 +10,8 @@
     "build": "tsx script/build.ts",
     "start": "NODE_ENV=production node dist/index.cjs",
     "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "test:site": "node script/verify-site.mjs"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",
@@ -111,5 +112,8 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
+  },
+  "devDependencies": {
+    "axe-core": "^4.14.0"
   }
 }

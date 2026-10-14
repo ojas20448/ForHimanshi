@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
@@ -12,272 +11,240 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useToast } from "@/hooks/use-toast";
-import { motion } from "framer-motion";
 import { useState } from "react";
-import { Mail, Instagram, MapPin, Loader2, Copy, Check } from "lucide-react";
+import {
+  Mail,
+  Instagram,
+  MapPin,
+  Loader2,
+  ArrowUpRight,
+  CheckCircle2,
+} from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().regex(/^\+?[0-9\s\-]{10,15}$/, "Please enter a valid phone number"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+  name: z.string().trim().min(2, "Please enter your name.").max(100),
+  email: z.string().trim().email("Please enter a valid email address."),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\+?[0-9\s-]{10,15}$/, "Please enter a valid phone number."),
+  message: z
+    .string()
+    .trim()
+    .min(10, "Please add a little more detail (at least 10 characters).")
+    .max(3000, "Please keep your message under 3,000 characters."),
 });
-
 export function Contact() {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [copiedLabel, setCopiedLabel] = useState<string | null>(null);
-
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedLabel(label);
-    toast({
-      title: "Copied!",
-      description: `${label} (${text}) copied to clipboard.`,
-    });
-    setTimeout(() => setCopiedLabel(null), 2500);
-  };
-
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle",
+  );
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-    },
+    defaultValues: { name: "", email: "", phone: "", message: "" },
   });
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true);
+    setStatus("sending");
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
+        signal: AbortSignal.timeout(20000),
       });
-      if (response.ok) {
-        toast({
-          title: "Message Sent",
-          description:
-            "Thank you for reaching out. I will get back to you soon.",
-        });
-        form.reset();
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to send message. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An error occurred. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
+      if (
+        !response.ok ||
+        !response.headers.get("content-type")?.includes("application/json")
+      )
+        throw new Error("Message could not be sent");
+      await response.json();
+      setStatus("sent");
+      form.reset();
+    } catch {
+      setStatus("error");
     }
   }
-
   return (
-    <section id="contact" className="py-16 md:py-28 bg-secondary/30 relative overflow-hidden">
-      {/* Background Blobs */}
-      <div className="absolute -top-40 -left-40 w-80 sm:w-96 h-80 sm:h-96 bg-[hsl(var(--accent-pink))]/40 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[400px] sm:w-[500px] h-[400px] sm:h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-
-      <div className="container mx-auto px-4 md:px-6 relative z-10 max-w-6xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20">
-          <motion.div
-            className="space-y-6 sm:space-y-8"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div>
-              <span className="text-primary font-semibold tracking-wider uppercase text-xs sm:text-sm mb-3 block">Get in Touch</span>
-              <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 sm:mb-6">
-                Let's start a conversation.
-              </h2>
-              <p className="text-muted-foreground text-base sm:text-lg leading-relaxed text-balance">
-                Reaching out allows us to connect and see how I can support you. Whether you have questions about the process or are ready to book, I'm here.
+    <section
+      id="contact"
+      className="section-space contact-section"
+      aria-labelledby="contact-title"
+    >
+      <div className="site-container contact-layout">
+        <div className="contact-copy">
+          <h2 id="contact-title">
+            Let’s start with
+            <br />
+            <em>a conversation.</em>
+          </h2>
+          <p>
+            Reaching out can feel like a big step. Whether you have a question
+            about therapy or you’re ready to begin, there’s room for you here.
+          </p>
+          <div className="contact-links">
+            <a href="mailto:manzartherapy@gmail.com" className="contact-link">
+              <Mail size={19} aria-hidden="true" />
+              manzartherapy@gmail.com
+              <ArrowUpRight size={15} aria-hidden="true" />
+            </a>
+            <a
+              href="https://wa.me/919599529780"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="contact-link"
+            >
+              <WhatsAppIcon size={20} />
+              +91 95995 29780
+              <ArrowUpRight size={15} aria-hidden="true" />
+            </a>
+            <a
+              href="https://instagram.com/manzartherapy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="contact-link"
+            >
+              <Instagram size={19} aria-hidden="true" />
+              @manzartherapy
+              <ArrowUpRight size={15} aria-hidden="true" />
+            </a>
+            <p className="contact-link">
+              <MapPin size={19} aria-hidden="true" />
+              Online & in person · East Delhi
+            </p>
+          </div>
+        </div>
+        <div className="contact-form">
+          <h3>A note to Himanshi.</h3>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              noValidate
+              aria-label="Contact Himanshi"
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Your name</FormLabel>
+                    <FormControl>
+                      <Input
+                        autoComplete="name"
+                        placeholder="What should I call you?"
+                        maxLength={100}
+                        required
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email address</FormLabel>
+                    <FormControl>
+                      <Input
+                        autoComplete="email"
+                        type="email"
+                        placeholder="you@example.com"
+                        required
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone number</FormLabel>
+                    <FormControl>
+                      <Input
+                        autoComplete="tel"
+                        type="tel"
+                        placeholder="+91"
+                        required
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>What would you like to ask?</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="A brief note is enough. Share only what feels comfortable."
+                        maxLength={3000}
+                        required
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <p className="form-note">
+                These details will be used to respond to your enquiry. Please
+                avoid sharing sensitive personal or clinical information in this
+                form.
               </p>
-            </div>
-
-            <div className="space-y-4 sm:space-y-5">
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10 group">
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                    <Mail size={20} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Email</p>
-                    <a href="mailto:manzartherapy@gmail.com" className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate block">
-                      manzartherapy@gmail.com
-                    </a>
-                  </div>
-                </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="rounded-xl shrink-0 opacity-80 group-hover:opacity-100"
-                  onClick={() => copyToClipboard("manzartherapy@gmail.com", "Email")}
-                >
-                  {copiedLabel === "Email" ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
-                </Button>
-              </div>
-
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10">
-                <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <Instagram size={20} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Instagram</p>
-                  <a href="https://instagram.com/manzartherapy" target="_blank" rel="noreferrer" className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate block">
-                    @manzartherapy
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10">
-                <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <MapPin size={20} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Location</p>
-                  <p className="text-base sm:text-lg font-medium text-foreground">
-                    Online & In-person (Delhi/Noida)
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-white/70 backdrop-blur-sm hover:bg-white transition-all shadow-xs border border-transparent hover:border-primary/10 group">
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="w-11 h-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                    <WhatsAppIcon size={20} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">WhatsApp</p>
-                    <a href="https://wa.me/919599529780" target="_blank" rel="noreferrer" className="text-base sm:text-lg font-medium text-foreground hover:text-primary transition-colors truncate block">
-                      +91 95995 29780
-                    </a>
-                  </div>
-                </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="rounded-xl shrink-0 opacity-80 group-hover:opacity-100"
-                  onClick={() => copyToClipboard("+919599529780", "WhatsApp")}
-                >
-                  {copiedLabel === "WhatsApp" ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white/85 backdrop-blur-md p-6 sm:p-8 md:p-10 rounded-2xl sm:rounded-[2rem] shadow-xl border border-white/60"
-          >
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-5"
+              <button
+                type="submit"
+                className="action-button"
+                disabled={status === "sending"}
               >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-foreground/80 font-medium">Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Your name"
-                          {...field}
-                          className="h-12 rounded-xl bg-white/60 border-gray-200 focus:border-primary/50 focus:bg-white transition-all px-4 text-base"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-foreground/80 font-medium">Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="your@email.com"
-                          {...field}
-                          className="h-12 rounded-xl bg-white/60 border-gray-200 focus:border-primary/50 focus:bg-white transition-all px-4 text-base"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-foreground/80 font-medium">Phone</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="tel"
-                          placeholder="+91 98765 43210"
-                          {...field}
-                          className="h-12 rounded-xl bg-white/60 border-gray-200 focus:border-primary/50 focus:bg-white transition-all px-4 text-base"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-foreground/80 font-medium">Message</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="How can I help you?"
-                          {...field}
-                          className="min-h-[130px] rounded-xl bg-white/60 border-gray-200 focus:border-primary/50 focus:bg-white transition-all p-4 resize-none text-base"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="submit"
-                  className="w-full rounded-xl h-12 text-base font-medium shadow-lg hover:shadow-xl transition-all min-h-[44px]"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="animate-spin mr-2 h-5 w-5" />
-                      Sending...
-                    </>
-                  ) : (
-                    "Send Message"
-                  )}
-                </Button>
-              </form>
-            </Form>
-          </motion.div>
+                {status === "sending" ? (
+                  <>
+                    <Loader2
+                      size={17}
+                      className="animate-spin"
+                      aria-hidden="true"
+                    />
+                    Sending your note…
+                  </>
+                ) : (
+                  <>
+                    Send your note <ArrowUpRight size={18} aria-hidden="true" />
+                  </>
+                )}
+              </button>
+              <div aria-live="polite" aria-atomic="true">
+                {status === "sent" && (
+                  <p className="form-result">
+                    <CheckCircle2
+                      size={17}
+                      className="inline mr-2"
+                      aria-hidden="true"
+                    />
+                    Thank you for reaching out. Your note has been received.
+                  </p>
+                )}
+                {status === "error" && (
+                  <p role="alert" className="form-result form-error">
+                    Your note couldn’t be sent. Your message is still here, so
+                    you can try again or{" "}
+                    <a href="mailto:manzartherapy@gmail.com">
+                      email Himanshi directly
+                    </a>
+                    .
+                  </p>
+                )}
+              </div>
+            </form>
+          </Form>
         </div>
       </div>
     </section>

@@ -1,14 +1,14 @@
 import { Link } from "wouter";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import "./atmospheric.css";
 
 // Animation settings (Atmospheric genre: fade-in only, no slide, no bounce)
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 1.2, ease: "easeOut" } }
 };
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
