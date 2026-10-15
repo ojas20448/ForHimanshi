@@ -25,9 +25,8 @@ export function Hero() {
             </div>
           </div>
           <p className="hero-description">
-            For the memories that shaped you, the emotions you hold quietly, and
-            the stories still unfolding within. A space to slow down and
-            understand your inner landscape, at your own pace.
+            A space to slow down, understand your inner landscape, and meet
+            yourself with care, at your own pace.
           </p>
           <div className="hero-actions">
             <Link

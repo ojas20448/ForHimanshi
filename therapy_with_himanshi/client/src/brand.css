@@ -647,6 +647,7 @@ html {
 }
 .workshop-preview {
   background: var(--paper);
+  border-bottom: 1px solid var(--line);
 }
 .workshop-preview-layout {
   display: grid;
@@ -1278,19 +1279,37 @@ html {
     font-size: clamp(49px, 11vw, 80px);
     max-width: 560px;
     line-height: 1.05;
+    margin-inline: auto;
+    text-align: center;
+  }
+  .home-page #concerns-title,
+  .home-page #about-title,
+  .home-page #services-title,
+  .home-page #finder-title,
+  .home-page #testimonials-title,
+  .home-page #workshop-preview-title,
+  .home-page #faq-title,
+  .home-page #contact-title {
+    text-align: center;
   }
   .hero-intro {
     margin-top: 22px;
     font-size: 12px;
+    text-align: center;
+  }
+  .hero-copy .hero-credentials {
+    justify-content: center;
   }
   .hero-description {
     margin-top: 12px;
     font-size: 13px;
     max-width: 510px;
+    margin-inline: auto;
   }
   .hero-actions {
     margin-top: 24px;
     gap: 10px 20px;
+    justify-content: center;
   }
   .action-button {
     padding: 14px 20px;
@@ -1306,6 +1325,7 @@ html {
     padding-top: 20px;
     font-size: 9px;
     gap: 9px 16px;
+    justify-content: center;
   }
   .hero-values li {
     gap: 7px;
@@ -1341,6 +1361,7 @@ html {
   .philosophy-intro p {
     font-size: 13px;
     margin-top: 20px;
+    text-align: left;
   }
   .about-layout,
   .finder-layout,
@@ -1365,6 +1386,7 @@ html {
     margin-top: 22px;
     font-size: 13px;
     max-width: 500px;
+    margin-inline: auto;
   }
   .service-row {
     grid-template-columns: 25px 1fr 40px;
@@ -1402,6 +1424,7 @@ html {
   }
   .concerns {
     flex-direction: column;
+    align-items: center;
     gap: 22px;
     margin-top: 0;
   }
@@ -1411,6 +1434,7 @@ html {
   .concerns ul {
     font-size: 10px;
     gap: 12px 18px;
+    justify-content: center;
   }
   .finder-result {
     padding: 28px 24px;

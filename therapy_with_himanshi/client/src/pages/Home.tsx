@@ -22,9 +22,9 @@ export default function Home() {
         <Concerns />
         <AboutSection />
         <Services />
-        <WorkshopsSection />
         <SessionFinder />
         <Testimonials />
+        <WorkshopsSection />
         <FAQ />
         <Contact />
       </main>
