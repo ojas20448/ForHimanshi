@@ -39,7 +39,6 @@ export function AboutSection() {
               “I believe in people, in the wisdom of their bodies, the truths of
               their stories, and the possibility of steady inner shifts.”
             </p>
-            <span>Himanshi Sahni</span>
           </div>
           <Reveal className="about-copy">
             <h3>

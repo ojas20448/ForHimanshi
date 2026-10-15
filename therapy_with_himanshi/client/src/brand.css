@@ -410,12 +410,6 @@ html {
   letter-spacing: -0.015em;
   margin-top: 24px;
 }
-.about-visual > span {
-  display: block;
-  margin-top: 23px;
-  font-size: 11px;
-  font-family: "Poppins", sans-serif;
-}
 .about-copy h3 {
   font-size: clamp(36px, 4vw, 50px);
   line-height: 1.08;
