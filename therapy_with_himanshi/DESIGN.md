@@ -14,4 +14,6 @@ Keep concerns in a distinct section immediately after the hero. Place the intera
 
 Use IMG_0456 as a tighter, responsive crop in the About section. Keep the photograph itself unchanged and crop its presentation in the image frame. Show IMG_3718 and IMG_3724 in the Workshops gallery with their full compositions; use IMG_3718 in the homepage workshop preview.
 
+The main IMG_2542 portrait uses a 1.35× presentation crop, anchored at 50% horizontal and 68% vertical, to bring Himanshi closer within the existing frame while keeping her full head visible. Preserve the original photograph.
+
 Interaction refinement: retain native scrolling and mark the current About, Therapy, or Contact section in navigation. Keep the FAQ introduction alongside the answers on sufficiently tall desktop screens. Let session choices and manually selected reflections acknowledge changes with a brief, subtle fade and four-pixel movement; retain focus and cancel movement when reduced motion is requested. Keep reflection controls before the changing text so their position is stable. Use gentle, one-time About reveals, and avoid shifting service text on hover. Mobile menus must remain scrollable on short screens. Route changes start immediately at the top; same-page anchor links retain native smooth scrolling.

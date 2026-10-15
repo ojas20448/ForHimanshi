@@ -51,7 +51,7 @@ export function Hero() {
             <img
               src="/images/himanshi-portrait-2542.webp"
               srcSet="/images/himanshi-portrait-2542-small.webp 480w, /images/himanshi-portrait-2542.webp 960w"
-              sizes="(max-width: 767px) calc(100vw - 64px), (max-width: 1023px) 400px, 430px"
+              sizes="(max-width: 480px) calc(135vw - 86px), 580px"
               alt="Himanshi Sahni outdoors in a garden"
               width="960"
               height="1280"
